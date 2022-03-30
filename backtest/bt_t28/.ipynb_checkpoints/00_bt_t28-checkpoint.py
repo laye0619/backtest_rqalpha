@@ -1,11 +1,11 @@
 """
 在terminal中运行:
-export PYTHONPATH=/root/inv_mgr/
+export PYTHONPATH=/root/backtest_rqalpha/
 rqalpha run --plot-save result.png -f ./00_bt_t28.py
 """
 from rqalpha.apis import *
 
-import utility as ut
+import backtest.bt_t28.const as const
 
 __config__ = {
     "base": {
@@ -37,7 +37,7 @@ __config__ = {
 
 
 def init(context):
-    context.params = ut.read_json_params()['tendency_28_backtest']
+    context.params = const.PARAMS['tendency_28_backtest']
     p_t28_aim_list = list(context.params.keys())
     context.p_CHECK_DATE = pd.date_range(context.config.base.start_date, context.config.base.end_date, freq='d')
 

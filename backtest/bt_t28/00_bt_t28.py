@@ -1,7 +1,8 @@
 """
 在terminal中运行:
-export PYTHONPATH=/root/backtest_rqalpha/
-rqalpha run --plot-save result.png -f ./00_bt_t28.py
+cd /home/jovyan/backtest_rqalpha/backtest/bt_t28/
+export PYTHONPATH=/home/jovyan/backtest_rqalpha/
+rqalpha run -f ./00_bt_t28.py --plot-save result.png
 """
 from rqalpha.apis import *
 
@@ -12,9 +13,9 @@ __config__ = {
         "accounts": {
             "STOCK": 1000 * 10000,
         },
-        "data_1st-bundle-path": "/Users/i335644/.rqalpha/bundle",
+        # "data_1st-bundle-path": "/Users/i335644/.rqalpha/bundle",
         "start_date": "20130101",
-        "end_date": "20220201",
+        "end_date": "20220301",
     },
     "extra": {
         "log_level": "info",
