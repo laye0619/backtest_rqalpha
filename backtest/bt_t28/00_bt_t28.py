@@ -1,21 +1,24 @@
 """
 在terminal中运行:
-cd /home/jovyan/backtest_rqalpha/backtest/bt_t28/
-export PYTHONPATH=/home/jovyan/backtest_rqalpha/
-rqalpha run -f ./00_bt_t28.py --plot-save result.png
+rqalpha run --plot-save result.png -f ./00_bt_t28.py
 """
 from rqalpha.apis import *
 
-import backtest.bt_t28.const as const
+PARAMS = {
+    'tendency_28_backtest': {
+        '000903.XSHG': '中证100',
+        '399006.XSHE': '创业板指'
+    }
+}
 
 __config__ = {
     "base": {
         "accounts": {
             "STOCK": 1000 * 10000,
         },
-        # "data_1st-bundle-path": "/Users/i335644/.rqalpha/bundle",
+        "data_1st-bundle-path": "/Users/i335644/.rqalpha/bundle",
         "start_date": "20130101",
-        "end_date": "20220301",
+        "end_date": "20220201",
     },
     "extra": {
         "log_level": "info",
@@ -38,7 +41,7 @@ __config__ = {
 
 
 def init(context):
-    context.params = const.PARAMS['tendency_28_backtest']
+    context.params = PARAMS['tendency_28_backtest']
     p_t28_aim_list = list(context.params.keys())
     context.p_CHECK_DATE = pd.date_range(context.config.base.start_date, context.config.base.end_date, freq='d')
 
