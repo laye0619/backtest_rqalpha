@@ -43,7 +43,8 @@ __config__ = {
 def init(context):
     context.params = PARAMS['tendency_28_backtest']
     p_t28_aim_list = list(context.params.keys())
-    context.p_CHECK_DATE = pd.date_range(context.config.base.start_date, context.config.base.end_date, freq='d')
+    context.p_CHECK_DATE = pd.date_range(
+        context.config.base.start_date, context.config.base.end_date, freq='d')
 
     # set tendency28 params
     context.p_t28_AIM1 = p_t28_aim_list[0]
@@ -63,19 +64,21 @@ def handle_bar(context, bar_dict):
 
 # 28轮动策略
 def __trans_tendency28(context):
-    df1 = pd.DataFrame(history_bars(context.p_t28_AIM1, bar_count=50, frequency='1d', fields=['datetime', 'close']))
+    df1 = pd.DataFrame(history_bars(
+        context.p_t28_AIM1, bar_count=50, frequency='1d', fields=['datetime', 'close']))
     df1['datetime'] = pd.to_datetime(df1['datetime'], format="%Y%m%d%H%M%S")
     up1 = (
-            (df1.iloc[-2].close - df1.iloc[-2 - context.p_t28_PREV].close)
-            / df1.iloc[-2 - context.p_t28_PREV].close
-            * 100
+        (df1.iloc[-2].close - df1.iloc[-2 - context.p_t28_PREV].close)
+        / df1.iloc[-2 - context.p_t28_PREV].close
+        * 100
     )
-    df2 = pd.DataFrame(history_bars(context.p_t28_AIM2, bar_count=50, frequency='1d', fields=['datetime', 'close']))
+    df2 = pd.DataFrame(history_bars(
+        context.p_t28_AIM2, bar_count=50, frequency='1d', fields=['datetime', 'close']))
     df2['datetime'] = pd.to_datetime(df2['datetime'], format="%Y%m%d%H%M%S")
     up2 = (
-            (df2.iloc[-2].close - df2.iloc[-2 - context.p_t28_PREV].close)
-            / df2.iloc[-2 - context.p_t28_PREV].close
-            * 100
+        (df2.iloc[-2].close - df2.iloc[-2 - context.p_t28_PREV].close)
+        / df2.iloc[-2 - context.p_t28_PREV].close
+        * 100
     )
     if up1 < context.p_t28_UP_THRESHOLD and up2 < context.p_t28_UP_THRESHOLD:
         if context.p_t28_STATUS == 1:
