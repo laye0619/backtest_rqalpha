@@ -18,7 +18,7 @@ __config__ = {
         },
         "data_1st-bundle-path": "/Users/i335644/.rqalpha/bundle",
         "start_date": "20130101",
-        "end_date": "20220201",
+        "end_date": "20220501",
     },
     "extra": {
         "log_level": "info",
