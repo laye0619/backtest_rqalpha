@@ -14,7 +14,7 @@ import pandas as pd
 from rqalpha import run
 
 start_date = "20130101"
-end_date = "20220201"
+end_date = "20220501"
 
 p_CHECK_DATE_list = [
     pd.date_range(start_date, end_date, freq='d'),
@@ -44,10 +44,10 @@ for p_CHECK_DATE in p_CHECK_DATE_list:
                         "accounts": {
                             "STOCK": 1000 * 10000,
                         },
-                        "data_1st-bundle-path": "/Users/i335644/.rqalpha/bundle",
+                        # "data_1st-bundle-path": "/Users/i335644/.rqalpha/bundle",
                         "start_date": start_date,
                         "end_date": end_date,
-                        "strategy_file": "00_bt_t28.py",
+                        "strategy_file": "./backtest/bt_t28/00_bt_t28.py",
                     },
                     "mod": {
                         "sys_progress": {
@@ -57,7 +57,7 @@ for p_CHECK_DATE in p_CHECK_DATE_list:
                         "sys_analyser": {
                             "enabled": True,
                             "plot": False,
-                            "output_file": "./param_optimize_result/t_28_out-{p_CHECK_DATE}-{p_t28_PREV}-{p_t28_UP_THRESHOLD}-{p_t28_DIFF_THRESHOLD}.pkl".format(
+                            "output_file": "./backtest/bt_t28/param_optimize_result/t_28_out-{p_CHECK_DATE}-{p_t28_PREV}-{p_t28_UP_THRESHOLD}-{p_t28_DIFF_THRESHOLD}.pkl".format(
                                 p_CHECK_DATE=p_CHECK_DATE.freq.freqstr,
                                 p_t28_PREV=p_t28_PREV,
                                 p_t28_UP_THRESHOLD=p_t28_UP_THRESHOLD,
@@ -106,4 +106,4 @@ if __name__ == '__main__':
         for task in tasks:
             executor.submit(run_bt, task)
     get_analysis_result().sort_values(by='sharpe', ascending=False).to_excel(
-        './param_optimize_result/bt_t28_wo_bond_param_optimize_result.xlsx', index=0)
+        './backtest/bt_t28/param_optimize_result/bt_t28_wo_bond_param_optimize_result.xlsx', index=0)
