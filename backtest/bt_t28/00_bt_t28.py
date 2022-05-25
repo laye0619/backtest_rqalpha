@@ -1,6 +1,6 @@
 """
 在terminal中运行:
-rqalpha run --plot-save result.png -f ./00_bt_t28.py
+rqalpha run --plot-save result.png -f ./backtest/bt_t28/00_bt_t28.py
 """
 from rqalpha.apis import *
 
@@ -16,7 +16,7 @@ __config__ = {
         "accounts": {
             "STOCK": 1000 * 10000,
         },
-        "data_1st-bundle-path": "/Users/i335644/.rqalpha/bundle",
+        # "data_1st-bundle-path": "/Users/i335644/.rqalpha/bundle",
         "start_date": "20130101",
         "end_date": "20220501",
     },
@@ -28,7 +28,7 @@ __config__ = {
             "plot": True,
             # "benchmark": "000300.XSHG",
             "benchmark": "399006.XSHE",
-            "report_save_path": './backtest_report/',
+            "report_save_path": './backtest/bt_t28/backtest_report/',
         },
         'sys_simulation': {
             'volume_limit': False,  # 成交量限制，因为买指数，按指数成交，所有金额较大，关闭成交量限制

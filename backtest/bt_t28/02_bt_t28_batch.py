@@ -27,7 +27,7 @@ for date in check_date:
             "accounts": {
                 "STOCK": 1000 * 10000,
             },
-            "data_1st-bundle-path": "/Users/i335644/.rqalpha/bundle",
+            # "data_1st-bundle-path": "/Users/i335644/.rqalpha/bundle",
             "start_date": date.strftime('%Y%m%d'),
             "end_date": end_date.strftime('%Y%m%d'),
             "strategy_file": "00_bt_t28.py",
