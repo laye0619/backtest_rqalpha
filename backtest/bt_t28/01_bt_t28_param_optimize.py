@@ -84,7 +84,7 @@ def get_analysis_result():
     years = (pd.to_datetime(end_date) - pd.to_datetime(start_date)).days / 365
     results = []
 
-    for name in glob.glob("./param_optimize_result/*.pkl"):
+    for name in glob.glob("./backtest/bt_t28/param_optimize_result/*.pkl"):
         result_dict = pd.read_pickle(name)
         summary = result_dict["summary"]
         trades = result_dict['trades']

@@ -30,7 +30,7 @@ for date in check_date:
             # "data_1st-bundle-path": "/Users/i335644/.rqalpha/bundle",
             "start_date": date.strftime('%Y%m%d'),
             "end_date": end_date.strftime('%Y%m%d'),
-            "strategy_file": "00_bt_t28.py",
+            "strategy_file": "./backtest/bt_t28/00_bt_t28.py",
         },
         "mod": {
             "sys_progress": {
@@ -40,7 +40,7 @@ for date in check_date:
             "sys_analyser": {
                 "enabled": True,
                 "plot": False,
-                "output_file": "5_year_test_result/t_28_out-{start_date}.pkl".format(
+                "output_file": "./backtest/bt_t28/5_year_test_result/t_28_out-{start_date}.pkl".format(
                     start_date=date.strftime('%Y%m%d'),
                 )
             },
@@ -63,7 +63,7 @@ def get_analysis_result():
     years = (pd.to_datetime(end_date) - pd.to_datetime(start_date)).days / 365
     results = []
 
-    for name in glob.glob("5_year_test_result/*.pkl"):
+    for name in glob.glob("./backtest/bt_t28/5_year_test_result/*.pkl"):
         result_dict = pd.read_pickle(name)
         summary = result_dict["summary"]
         trades = result_dict['trades']
@@ -85,4 +85,4 @@ if __name__ == '__main__':
         for task in tasks:
             executor.submit(run_bt, task)
     get_analysis_result().sort_values(by='sharpe', ascending=False).to_excel(
-        '5_year_test_result/bt_t28_wo_bond_5years.xlsx', index=0)
+        './backtest/bt_t28/5_year_test_result/bt_t28_wo_bond_5years.xlsx', index=0)
