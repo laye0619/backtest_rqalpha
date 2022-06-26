@@ -1,6 +1,6 @@
 """
 在terminal中运行:
-rqalpha run --plot-save result.png -f ./backtest/bt_t28/00_bt_t28.py
+rqalpha run --plot-save ./backtest/bt_t28/result.png -f ./backtest/bt_t28/00_bt_t28.py
 """
 from rqalpha.apis import *
 
@@ -18,7 +18,7 @@ __config__ = {
         },
         # "data_1st-bundle-path": "/Users/i335644/.rqalpha/bundle",
         "start_date": "20130101",
-        "end_date": "20220501",
+        "end_date": "20220601",
     },
     "extra": {
         "log_level": "info",
