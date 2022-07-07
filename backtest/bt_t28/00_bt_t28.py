@@ -1,8 +1,5 @@
-"""
-在terminal中运行:
-rqalpha run --plot-save ./backtest/bt_t28/result.png -f ./backtest/bt_t28/00_bt_t28.py
-"""
 from rqalpha.apis import *
+from rqalpha import run_func
 
 PARAMS = {
     'tendency_28_backtest': {
@@ -16,7 +13,6 @@ __config__ = {
         "accounts": {
             "STOCK": 1000 * 10000,
         },
-        # "data_1st-bundle-path": "/Users/i335644/.rqalpha/bundle",
         "start_date": "20130101",
         "end_date": "20220701",
     },
@@ -25,7 +21,7 @@ __config__ = {
     },
     "mod": {
         "sys_analyser": {
-            "plot": True,
+            'plot_save_file': './backtest/bt_t28/backtest_report/grid_result.png',
             # "benchmark": "000300.XSHG",
             "benchmark": "399006.XSHE",
             "report_save_path": './backtest/bt_t28/backtest_report/',
@@ -103,3 +99,6 @@ def __trans_tendency28(context):
             order_target_percent(context.p_t28_AIM1, 0)
             order_target_percent(context.p_t28_AIM2, 1)
             context.p_t28_STATUS = 2
+
+
+run_func(**globals())
