@@ -1,18 +1,17 @@
-from this import d
 from rqalpha.apis import *
 from backtest.bt_grid.grid import Grid
 from rqalpha import run_func
 
 PARAMS = {
-    'target': '399006.XSHE',
+    'target': '512880.XSHG',
     'grid_params': {
-        'startpoint': 1750,
-        'interval': 0.1,
+        'startpoint': 1.06,
+        'interval': 0.5,
         'size': 30
     },
     'transction': {
-        'init_portion': 0.8,
-        'grid_portion': 0.05
+        'init_portion': 0.3,
+        'grid_portion': 0.1
     },
     'fired': False
 }
@@ -20,10 +19,10 @@ PARAMS = {
 __config__ = {
     "base": {
         "accounts": {
-            "STOCK": 1000 * 10000,
+            "STOCK": 100 * 10000,
         },
-        "start_date": "20130101",
-        "end_date": "20201231",
+        "start_date": "20160930",
+        "end_date": "20221231",
     },
     "extra": {
         "log_level": "info",
@@ -55,16 +54,12 @@ def handle_bar(context, bar_dict):
         return
     logger.info('Strategy executing...')
     if not context.params['fired']:  # 第一天运行，需要计算网格并建立初始仓位
-        bar_list = history_bars(  # 获取当前价格
-            order_book_id=context.params['target'],
-            bar_count=1,
-            frequency='1d',
-            include_now=True
-        )
+        # 获取当前价格
+        current_price = bar_dict[context.params['target']].close
 
         # 确定中轴是采用给定参数还是以当前价格为中轴
         context.params['grid_params']['startpoint'] = context.params['grid_params'].get(
-            'startpoint', bar_list[0]['close'])
+            'startpoint', current_price)
 
         # 建立网格
         context.grid = Grid(
@@ -75,7 +70,7 @@ def handle_bar(context, bar_dict):
 
         # 确定当前价格在网格中的游标
         context.grid.current_pointer = context.grid.grid_series[
-            context.grid.grid_series > bar_list[0]['close']].index[0]
+            context.grid.grid_series > current_price].index[0]
 
         # 根据参数确定每一网的投资金额
         context.grid_amount = context.config.base.accounts['STOCK'] * \
@@ -86,18 +81,12 @@ def handle_bar(context, bar_dict):
                       context.params['transction']['init_portion'])
         context.params['fired'] = True
         return
-    __trans_grid(context)
+    __trans_grid(context, bar_dict)
 
 
 # 网格策略
-def __trans_grid(context):
-    bar_list = history_bars(
-        order_book_id=context.params['target'],
-        bar_count=1,
-        frequency='1d',
-        include_now=True
-    )
-    current_price = bar_list[0]['close']
+def __trans_grid(context, bar_dict):
+    current_price = bar_dict[context.params['target']].close
     left_price = context.grid.grid_series[context.grid.current_pointer-1]
     right_price = context.grid.grid_series[context.grid.current_pointer+1]
     if current_price <= left_price:  # 触发买入条件
