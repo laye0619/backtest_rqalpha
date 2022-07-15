@@ -1,12 +1,16 @@
-"""基于动量的大小盘风格轮动策略
+"""基于动量的行业轮动策略
 """
 from backtest.rotation_strategy.strategy.rs_momentum import RSMomentum
 from rqalpha.apis import *
 
 TARGET_LIST = {
-    'style_28': {
-        '000903.XSHG': '中证100',
-        '399006.XSHE': '创业板指'
+    'ind_rotation': {
+        '399975.XSHE': '证券公司',  # '20130715'
+        '000819.XSHG':'有色金属',  # '20120509'
+        '000993.XSHG':'全指信息',  # '20110802'
+        '399971.XSHE':'中证传媒',  # '20140415'
+        '399932.XSHE':'中证消费',  # '20090703'
+        '399913.XSHE':'300医药'  # '20070702'
     }
 }
 
@@ -16,8 +20,7 @@ def init(context):
     # 1.不变参数在此设定
     # 2.可变参数通过config.extra.context_vars来传入，下面RSMomentum对象从context中读取
     
-    context.target_list = list(TARGET_LIST['style_28'].keys())
-    context.holding_num = 1,
+    context.target_list = list(TARGET_LIST['ind_rotation'].keys())
 
     context.rs_momentum = RSMomentum(
         target_list=context.target_list,
@@ -25,6 +28,7 @@ def init(context):
         momentum_period=context.momentum_period[0],
         trend_indicator_filter=context.trend_indicator_filter[0],
         trend_indicator_buffer=context.trend_indicator_buffer[0],
+        rank_indicator_buffer=context.rank_indicator_buffer[0]
     )
 
 

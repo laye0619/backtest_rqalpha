@@ -1,0 +1,48 @@
+name: Run Rqalpha Backtest
+
+on:
+  workflow_dispatch:
+    inputs:
+      strategy_path:
+        description: 'strategy file path'
+        required: true
+        default: './backtest/rotation_strategy/bt/industry_rotation/rs_m_ind_param_optimize.py'
+      report_path:
+        description: 'report folder path - wo last /'
+        required: true
+        default: './backtest/rotation_strategy/bt_report/industry_rotation/param_optimize'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Initialization environment
+      env:
+        DEBIAN_FRONTEND: noninteractive
+      run: |
+        sudo -E apt-get -qq update
+        sudo -E apt-get -qq install sshpass
+
+    - name: Set up Python 3.9
+      uses: actions/setup-python@v4
+      with:
+        python-version: 3.9
+
+    - name: Install python dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install rqalpha pandas
+
+    - name: Run backtest python file
+      run: |
+        export PYTHONPATH=$PYTHONPATH:$PWD
+        python -u ${{ github.event.inputs.strategy_path }}
+
+    - name: Upload report to Home Server
+      run: |
+        find ${{ github.event.inputs.report_path }} -name "*.pkl" -depth -exec rm {} \; 
+        tar -czf report.tar.gz ${{ github.event.inputs.report_path }}
+        sshpass -p ${{ secrets.HOME_SERVER_PASS }} scp -P ${{ secrets.HOME_SERVER_PORT }} -o StrictHostKeyChecking=no ./report.tar.gz ${{ secrets.HOME_SERVER_USERNAME }}@${{ secrets.HOME_SERVER_ADDRESS }}:/home/layewang/Downloads
