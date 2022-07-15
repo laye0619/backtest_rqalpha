@@ -13,7 +13,7 @@ trend_indicator_buffer = 1.0,
 rank_indicator_buffer = 1
 check_date = pd.date_range(start_date, end_date, freq='d')
 
-strategy_file_path = f'./backtest/rotation_strategy/bt/{strategy_name}/strategy_name.py'
+strategy_file_path = f'./backtest/rotation_strategy/bt/{strategy_name}/{strategy_name}.py'
 report_save_path = f'./backtest/rotation_strategy/bt_report/{strategy_name}/single_run'
 
 config = {
