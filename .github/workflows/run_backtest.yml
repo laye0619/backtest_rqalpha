@@ -45,6 +45,8 @@ jobs:
       run: |
         if [ ! -d ./backtest/${{ github.event.inputs.strategy_category }}/bt_report/${{ github.event.inputs.strategy_name }}/${{ github.event.inputs.backtest_type }} ]; then
           mkdir -p ./backtest/${{ github.event.inputs.strategy_category }}/bt_report/${{ github.event.inputs.strategy_name }}/${{ github.event.inputs.backtest_type }}
+        else
+          rm -rf ./backtest/${{ github.event.inputs.strategy_category }}/bt_report/${{ github.event.inputs.strategy_name }}/${{ github.event.inputs.backtest_type }}/*
         fi
         export PYTHONPATH=$PYTHONPATH:$PWD
         python -u ./backtest/${{ github.event.inputs.strategy_category }}/bt/${{ github.event.inputs.strategy_name }}/${{ github.event.inputs.strategy_name }}.py
