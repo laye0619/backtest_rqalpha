@@ -49,7 +49,7 @@ for start_date in test_check_date:
                 "trend_indicator_filter": (trend_indicator_filter,),
                 "trend_indicator_buffer": (trend_indicator_buffer,),
             },
-            "log_level": "info",
+            "log_level": "ERROR",  # DEBUG, INFO, WARNING, ERROR
         },
         "mod": {
             "sys_progress": {

@@ -49,7 +49,7 @@ for check_date in check_date_list:
                                     "trend_indicator_buffer": (trend_indicator_buffer/10,),
                                     "rank_indicator_buffer": (rank_indicator_buffer,)
                                 },
-                                "log_level": "error",
+                                "log_level": "ERROR",  # DEBUG, INFO, WARNING, ERROR
                             },
                             "base": {
                                 "start_date": start_date,

@@ -35,7 +35,7 @@ config = {
             "trend_indicator_buffer": trend_indicator_buffer,
             "rank_indicator_buffer": (rank_indicator_buffer,)
         },
-        "log_level": "info",
+        "log_level": "INFO",  # DEBUG, INFO, WARNING, ERROR
     },
     "mod": {
         "sys_progress": {
