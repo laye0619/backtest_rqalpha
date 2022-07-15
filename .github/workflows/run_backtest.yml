@@ -3,14 +3,18 @@ name: Run Rqalpha Backtest
 on:
   workflow_dispatch:
     inputs:
-      strategy_path:
-        description: 'strategy file path'
+      strategy_category:
+        description: 'strategy category'
         required: true
-        default: './backtest/rotation_strategy/bt/industry_rotation/rs_m_ind_param_optimize.py'
-      report_path:
-        description: 'report folder path - wo last /'
+        default: 'rotation_strategy'
+      strategy_name:
+        description: 'strategy name'
         required: true
-        default: './backtest/rotation_strategy/bt_report/industry_rotation/param_optimize'
+        default: 'rs_m_ind'
+      backtest_type:
+        description: 'param_optimize or period_test'
+        required: true
+        default: 'param_optimize'
 
 jobs:
   build:
@@ -40,10 +44,10 @@ jobs:
     - name: Run backtest python file
       run: |
         export PYTHONPATH=$PYTHONPATH:$PWD
-        python -u ${{ github.event.inputs.strategy_path }}
+        python -u ./backtest/${{ github.event.inputs.strategy_category }}/bt/${{ github.event.inputs.strategy_name }}/${{ github.event.inputs.strategy_name }}.py
 
     - name: Upload report to Home Server
       run: |
-        find ${{ github.event.inputs.report_path }} -name "*.pkl" -depth -exec rm {} \; 
-        tar -czf report_`date +%F`.tar.gz ${{ github.event.inputs.report_path }}
+        find ./backtest/${{ github.event.inputs.strategy_category }}/bt_report/${{ github.event.inputs.strategy_name }}/${{ github.event.inputs.backtest_type }} -name "*.pkl" -depth -exec rm {} \; 
+        tar -czf report_`date +%F`.tar.gz ./backtest/${{ github.event.inputs.strategy_category }}/bt_report/${{ github.event.inputs.strategy_name }}/${{ github.event.inputs.backtest_type }}
         sshpass -p ${{ secrets.HOME_SERVER_PASS }} scp -P ${{ secrets.HOME_SERVER_PORT }} -o StrictHostKeyChecking=no ./report_`date +%F`.tar.gz ${{ secrets.HOME_SERVER_USERNAME }}@${{ secrets.HOME_SERVER_ADDRESS }}:/home/layewang/Downloads

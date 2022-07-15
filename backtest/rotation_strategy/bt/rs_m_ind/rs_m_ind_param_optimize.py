@@ -9,6 +9,8 @@
     6 不同rank_indicator_buffer，range(0, 2, 1)
 """
 
+strategy_name = 'rs_m_ind'
+
 import concurrent.futures
 import glob
 import multiprocessing
@@ -18,8 +20,8 @@ from rqalpha import run
 
 start_date = "20140416"
 end_date = "20220701"
-strategy_file_path = './backtest/rotation_strategy/bt/industry_rotation/rs_m_ind.py'
-report_save_path = './backtest/rotation_strategy/bt_report/industry_rotation/param_optimize'
+strategy_file_path = f'./backtest/rotation_strategy/bt/{strategy_name}/{strategy_name}.py'
+report_save_path = f'./backtest/rotation_strategy/bt_report/{strategy_name}/param_optimize'
 
 check_date_list = [
     pd.date_range(start_date, end_date, freq='d'),
@@ -72,7 +74,7 @@ for check_date in check_date_list:
                                     # 当不输出 csv/pickle/plot 等内容时，关闭该项可关闭策略运行过程中部分收集数据的逻辑，用以提升性能
                                     "record": True,
                                     # 回测结果输出的文件路径，该文件为 pickle 格式，内容为每日净值、头寸、流水及风险指标等；若不设置则不输出该文件
-                                    "output_file": f'{report_save_path}/ind_rotation_out.{check_date.freq.freqstr}.{momentum_period}.{trend_indicator_filter}.{trend_indicator_buffer}.{holding_num}.{rank_indicator_buffer}.pkl',
+                                    "output_file": f'{report_save_path}/{strategy_name}.{check_date.freq.freqstr}.{momentum_period}.{trend_indicator_filter}.{trend_indicator_buffer}.{holding_num}.{rank_indicator_buffer}.pkl',
                                     # 回测报告的数据目录，报告为 csv 格式；若不设置则不输出报告
                                     "report_save_path": None,
                                     # 是否在回测结束后绘制收益曲线图
@@ -160,4 +162,4 @@ if __name__ == '__main__':
         for task in tasks:
             executor.submit(run_bt, task)
     get_analysis_result().sort_values(by='sharpe', ascending=False).to_excel(
-        f'{report_save_path}/rs_m_ind_param_optimize.xlsx', index=0)
+        f'{report_save_path}/{strategy_name}_param_optimize.xlsx', index=0)

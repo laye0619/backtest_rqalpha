@@ -11,6 +11,8 @@ from datetime import datetime, timedelta
 import pandas as pd
 from rqalpha import run
 
+strategy_name = 'rs_m_ind'
+
 start_date = "20140416"
 
 start_date = pd.to_datetime('2014-04-16')
@@ -24,8 +26,8 @@ trend_indicator_filter = 0.0,
 trend_indicator_buffer = 1.0,
 rank_indicator_buffer = 1
 
-strategy_file_path = './backtest/rotation_strategy/bt/industry_rotation/rs_m_ind.py'
-report_save_path = './backtest/rotation_strategy/bt_report/industry_rotation/period_test'
+strategy_file_path = f'./backtest/rotation_strategy/bt/{strategy_name}/{strategy_name}.py'
+report_save_path = f'./backtest/rotation_strategy/bt_report/{strategy_name}/period_test'
 
 tasks = []
 for start_date in test_check_date:
@@ -69,7 +71,7 @@ for start_date in test_check_date:
                 # 当不输出 csv/pickle/plot 等内容时，关闭该项可关闭策略运行过程中部分收集数据的逻辑，用以提升性能
                 "record": True,
                 # 回测结果输出的文件路径，该文件为 pickle 格式，内容为每日净值、头寸、流水及风险指标等；若不设置则不输出该文件
-                "output_file": f"{report_save_path}/ind_rotation_out.{start_date.strftime('%Y%m%d')}.pkl",
+                "output_file": f"{report_save_path}/{strategy_name}.{start_date.strftime('%Y%m%d')}.pkl",
                 # 回测报告的数据目录，报告为 csv 格式；若不设置则不输出报告
                 "report_save_path": report_save_path,
                 # 是否在回测结束后绘制收益曲线图
@@ -158,4 +160,4 @@ if __name__ == '__main__':
         for task in tasks:
             executor.submit(run_bt, task)
     get_analysis_result().sort_values(by='sharpe', ascending=False).to_excel(
-        f'{report_save_path}/ind_rotation_out_period_test_{each_period_years}years.xlsx', index=0)
+        f'{report_save_path}/{strategy_name}_period_test_{each_period_years}years.xlsx', index=0)

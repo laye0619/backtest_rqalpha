@@ -1,6 +1,8 @@
 from rqalpha import run_file
 import pandas as pd
 
+strategy_name = 'rs_m_style_28'
+
 start_date = "20130101"
 end_date = "20220701"
 
@@ -9,8 +11,8 @@ trend_indicator_filter = 0.0,
 trend_indicator_buffer = 0.4,
 check_date = pd.date_range(start_date, end_date, freq='d')
 
-strategy_file_path = './backtest/rotation_strategy/bt/style_28/rs_m_style_28.py'
-report_save_path = './backtest/rotation_strategy/bt_report/style_28/single_run'
+strategy_file_path = f'./backtest/rotation_strategy/bt/{strategy_name}/{strategy_name}.py'
+report_save_path = f'./backtest/rotation_strategy/bt_report/{strategy_name}/single_run'
 
 config = {
     "base": {
