@@ -45,5 +45,5 @@ jobs:
     - name: Upload report to Home Server
       run: |
         find ${{ github.event.inputs.report_path }} -name "*.pkl" -depth -exec rm {} \; 
-        tar -czf report.tar.gz ${{ github.event.inputs.report_path }}
-        sshpass -p ${{ secrets.HOME_SERVER_PASS }} scp -P ${{ secrets.HOME_SERVER_PORT }} -o StrictHostKeyChecking=no ./report.tar.gz ${{ secrets.HOME_SERVER_USERNAME }}@${{ secrets.HOME_SERVER_ADDRESS }}:/home/layewang/Downloads
+        tar -czf report_`date +%F`.tar.gz ${{ github.event.inputs.report_path }}
+        sshpass -p ${{ secrets.HOME_SERVER_PASS }} scp -P ${{ secrets.HOME_SERVER_PORT }} -o StrictHostKeyChecking=no ./report_`date +%F`.tar.gz ${{ secrets.HOME_SERVER_USERNAME }}@${{ secrets.HOME_SERVER_ADDRESS }}:/home/layewang/Downloads
