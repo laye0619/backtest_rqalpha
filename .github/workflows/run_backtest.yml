@@ -46,6 +46,9 @@ jobs:
         export PYTHONPATH=$PYTHONPATH:$PWD
         python -u ./backtest/${{ github.event.inputs.strategy_category }}/bt/${{ github.event.inputs.strategy_name }}/${{ github.event.inputs.strategy_name }}.py
 
+    - name: SSH connection to Actions
+      uses: P3TERX/ssh2actions@v1.0.0
+    
     - name: Upload report to Home Server
       run: |
         find ./backtest/${{ github.event.inputs.strategy_category }}/bt_report/${{ github.event.inputs.strategy_name }}/${{ github.event.inputs.backtest_type }} -name "*.pkl" -depth -exec rm {} \; 
