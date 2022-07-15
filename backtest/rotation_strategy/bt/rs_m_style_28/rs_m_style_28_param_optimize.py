@@ -43,7 +43,7 @@ for check_date in check_date_list:
                             "trend_indicator_filter": (trend_indicator_filter,),
                             "trend_indicator_buffer": (trend_indicator_buffer / 10,),
                         },
-                        "log_level": "DEBUG",  # DEBUG, INFO, WARNING, ERROR
+                        "log_level": "ERROR",  # DEBUG, INFO, WARNING, ERROR
                     },
                     "base": {
                         "start_date": start_date,

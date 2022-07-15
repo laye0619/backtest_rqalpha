@@ -49,7 +49,7 @@ jobs:
           rm -rf ./backtest/${{ github.event.inputs.strategy_category }}/bt_report/${{ github.event.inputs.strategy_name }}/${{ github.event.inputs.backtest_type }}/*
         fi
         export PYTHONPATH=$PYTHONPATH:$PWD
-        python -u ./backtest/${{ github.event.inputs.strategy_category }}/bt/${{ github.event.inputs.strategy_name }}/${{ github.event.inputs.strategy_name }}.py
+        python -u ./backtest/${{ github.event.inputs.strategy_category }}/bt/${{ github.event.inputs.strategy_name }}/${{ github.event.inputs.strategy_name }}_${{ github.event.inputs.backtest_type }}.py
 
     - name: SSH connection to Actions
       uses: P3TERX/ssh2actions@v1.0.0
