@@ -9,14 +9,13 @@
     6 不同rank_indicator_buffer，range(0, 2, 1)
 """
 
+from rqalpha import run
+import pandas as pd
+import multiprocessing
+import glob
+import concurrent.futures
 strategy_name = 'rs_m_ind'
 
-import concurrent.futures
-import glob
-import multiprocessing
-
-import pandas as pd
-from rqalpha import run
 
 start_date = "20140416"
 end_date = "20220701"
@@ -34,7 +33,7 @@ check_date_list = [
 
 tasks = []
 for check_date in check_date_list:
-    for momentum_period in range(15, 31, 5):
+    for momentum_period in [15]:
         for trend_indicator_filter in range(-2, 3, 1):
             for trend_indicator_buffer in range(0, 11, 2):
                 for holding_num in range(1, 4, 1):
@@ -158,7 +157,7 @@ def get_analysis_result():
 
 if __name__ == '__main__':
     with concurrent.futures.ProcessPoolExecutor(max_workers=multiprocessing.cpu_count()) as executor:
-    # with concurrent.futures.ProcessPoolExecutor(max_workers=1) as executor:
+        # with concurrent.futures.ProcessPoolExecutor(max_workers=1) as executor:
         for task in tasks:
             executor.submit(run_bt, task)
     get_analysis_result().sort_values(by='sharpe', ascending=False).to_excel(
