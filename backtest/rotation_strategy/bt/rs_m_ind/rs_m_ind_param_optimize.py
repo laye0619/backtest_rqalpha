@@ -34,7 +34,7 @@ check_date_list = [
 
 tasks = []
 for check_date in check_date_list:
-    for momentum_period in [20]:
+    for momentum_period in [25]:
         for trend_indicator_filter in range(-2, 3, 1):
             for trend_indicator_buffer in range(0, 11, 2):
                 for holding_num in range(1, 4, 1):
