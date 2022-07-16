@@ -56,6 +56,7 @@ jobs:
     
     - name: Upload report to Home Server
       run: |
-        find ./backtest/${{ github.event.inputs.strategy_category }}/bt_report/${{ github.event.inputs.strategy_name }}/${{ github.event.inputs.backtest_type }} -name "*.pkl" -depth -exec rm {} \; 
-        tar -czf report_${{ github.event.inputs.strategy_name }}_${{ github.event.inputs.backtest_type }}.tar.gz ./backtest/${{ github.event.inputs.strategy_category }}/bt_report/${{ github.event.inputs.strategy_name }}/${{ github.event.inputs.backtest_type }}
-        sshpass -p ${{ secrets.HOME_SERVER_PASS }} scp -P ${{ secrets.HOME_SERVER_PORT }} -o StrictHostKeyChecking=no ./report_${{ github.event.inputs.strategy_name }}_${{ github.event.inputs.backtest_type }}.tar.gz ${{ secrets.HOME_SERVER_USERNAME }}@${{ secrets.HOME_SERVER_ADDRESS }}:/home/layewang/Downloads
+        sshpass -p ${{ secrets.HOME_SERVER_PASS }} scp -P ${{ secrets.HOME_SERVER_PORT }} -o StrictHostKeyChecking=no ./backtest/${{ github.event.inputs.strategy_category }}/bt_report/${{ github.event.inputs.strategy_name }}/${{ github.event.inputs.backtest_type }}/*.xlsx ${{ secrets.HOME_SERVER_USERNAME }}@${{ secrets.HOME_SERVER_ADDRESS }}:/home/layewang/Downloads
+
+# find ./backtest/${{ github.event.inputs.strategy_category }}/bt_report/${{ github.event.inputs.strategy_name }}/${{ github.event.inputs.backtest_type }} -name "*.pkl" -depth -exec rm {} \; 
+# tar -czf report_${{ github.event.inputs.strategy_name }}_${{ github.event.inputs.backtest_type }}.tar.gz ./backtest/${{ github.event.inputs.strategy_category }}/bt_report/${{ github.event.inputs.strategy_name }}/${{ github.event.inputs.backtest_type }}

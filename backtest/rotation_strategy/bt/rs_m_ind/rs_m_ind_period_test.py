@@ -73,11 +73,11 @@ for start_date in test_check_date:
                 # 回测结果输出的文件路径，该文件为 pickle 格式，内容为每日净值、头寸、流水及风险指标等；若不设置则不输出该文件
                 "output_file": f"{report_save_path}/{strategy_name}.{start_date.strftime('%Y%m%d')}.pkl",
                 # 回测报告的数据目录，报告为 csv 格式；若不设置则不输出报告
-                "report_save_path": report_save_path,
+                "report_save_path": None,
                 # 是否在回测结束后绘制收益曲线图
                 'plot': False,
                 # 收益曲线图路径，若设置则将收益曲线图保存为 png 文件
-                'plot_save_file': f'{report_save_path}/result.png',
+                'plot_save_file': None,
                 # 收益曲线图设置
                 'plot_config': {
                     # 是否在收益图中展示买卖点
