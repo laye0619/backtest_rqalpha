@@ -9,11 +9,12 @@
     6 不同rank_indicator_buffer，range(0, 2, 1)
 """
 
-from rqalpha import run
-import pandas as pd
-import multiprocessing
-import glob
 import concurrent.futures
+import multiprocessing
+
+import backtest.utils.bt_analysis_helper as bt_analysis_helper
+import pandas as pd
+from rqalpha import run
 
 strategy_name = 'rs_m_ind'
 
@@ -135,31 +136,12 @@ def run_bt(config):
     run(config)
 
 
-def get_analysis_result():
-    years = (pd.to_datetime(end_date) - pd.to_datetime(start_date)).days / 365
-    results = []
-
-    for name in glob.glob(f'{report_save_path}/*.pkl'):
-        result_dict = pd.read_pickle(name)
-        summary = result_dict["summary"]
-        trades = result_dict['trades']
-        results.append({
-            "name": name,
-            "annualized_returns": summary["annualized_returns"],
-            "sharpe": summary["sharpe"],
-            "max_drawdown": summary["max_drawdown"],
-            "income_drawdown_ratio": summary["annualized_returns"]/summary["max_drawdown"],
-            "trade_times_per_year": round(len(trades) / years, 1),
-            "alpha": summary["alpha"],
-            "total_returns": summary["total_returns"],
-        })
-    return pd.DataFrame(results)
-
-
 if __name__ == '__main__':
     with concurrent.futures.ProcessPoolExecutor(max_workers=multiprocessing.cpu_count()) as executor:
         # with concurrent.futures.ProcessPoolExecutor(max_workers=1) as executor:
         for task in tasks:
             executor.submit(run_bt, task)
-    get_analysis_result().sort_values(by='sharpe', ascending=False).to_excel(
+    bt_analysis_helper.get_analysis_result(
+        start_date, end_date, report_save_path
+    ).sort_values(by='sharpe', ascending=False).to_excel(
         f'{report_save_path}/{strategy_name}_param_optimize.xlsx', index=0)

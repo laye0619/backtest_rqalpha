@@ -4,10 +4,10 @@
 从start_date开始，每次运行向后推迟一周，三年或五年的策略表现情况
 """
 import concurrent.futures
-import glob
 import multiprocessing
 from datetime import datetime, timedelta
 
+import backtest.utils.bt_analysis_helper as bt_analysis_helper
 import pandas as pd
 from rqalpha import run
 
@@ -125,31 +125,11 @@ def run_bt(config):
     run(config)
 
 
-def get_analysis_result():
-    years = (pd.to_datetime(end_date) - pd.to_datetime(start_date)).days / 365
-    results = []
-
-    for name in glob.glob(f"{report_save_path}/*.pkl"):
-        result_dict = pd.read_pickle(name)
-        summary = result_dict["summary"]
-        trades = result_dict['trades']
-        results.append({
-            "name": name,
-            "annualized_returns": summary["annualized_returns"],
-            "sharpe": summary["sharpe"],
-            "max_drawdown": summary["max_drawdown"],
-            "income_drawdown_ratio": summary["annualized_returns"]/summary["max_drawdown"],
-            "trade_times_per_year": round(len(trades) / years, 1),
-            "alpha": summary["alpha"],
-            "total_returns": summary["total_returns"],
-        })
-
-    return pd.DataFrame(results)
-
-
 if __name__ == '__main__':
     with concurrent.futures.ProcessPoolExecutor(max_workers=multiprocessing.cpu_count()) as executor:
         for task in tasks:
             executor.submit(run_bt, task)
-    get_analysis_result().sort_values(by='sharpe', ascending=False).to_excel(
+    bt_analysis_helper.get_analysis_result(
+        start_date, end_date, report_save_path
+    ).sort_values(by='sharpe', ascending=False).to_excel(
         f'{report_save_path}/{strategy_name}_period_test_{each_period_years}years.xlsx', index=0)
