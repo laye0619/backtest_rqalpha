@@ -2,7 +2,7 @@
 批量回测任务
 测试不同的参数在固定周期内（start_date & end_date）的表现，从而确定最优参数
     1 不同时间检查频率，每天检查，每3天检查，每周检查，半月检查等等
-    2 不同momentum_period，range(15, 31, 5)
+    2 不同momentum_period，range(10, 31, 5)
     3 不同trend_indicator_filter，range(-2, 3, 1)
     4 不同trend_indicator_buffer，range(0, 11, 2) /10
     5 不同holding_num，range(1, 4, 1)
@@ -14,6 +14,7 @@ import pandas as pd
 import multiprocessing
 import glob
 import concurrent.futures
+
 strategy_name = 'rs_m_ind'
 
 
@@ -33,7 +34,7 @@ check_date_list = [
 
 tasks = []
 for check_date in check_date_list:
-    for momentum_period in [20, 25]:
+    for momentum_period in [10]:
         for trend_indicator_filter in range(-2, 3, 1):
             for trend_indicator_buffer in range(0, 11, 2):
                 for holding_num in range(1, 4, 1):
