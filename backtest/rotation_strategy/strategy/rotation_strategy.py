@@ -78,12 +78,15 @@ class RotationStrategy(ABC):
                 return
             ######
 
-            today_to_buy = list(
+            today_to_buy_list = list(
                 today_to_buy.iloc[:self.holding_num, ]['target'])
             today_holding_list = [x.order_book_id for x in current_positions]
-            today_to_buy = list(
-                set(today_to_buy).difference(set(today_holding_list)))
-            for target in today_to_buy:
+            today_to_buy_list = list(
+                set(today_to_buy_list).difference(set(today_holding_list)))
+            if (len(today_to_buy_list)+len(today_holding_list)) > self.holding_num:  # 处理购买后超过持仓上限的情形
+                today_to_buy_list = list(
+                    today_to_buy.iloc[:(self.holding_num-len(today_holding_list)), ]['target'])
+            for target in today_to_buy_list:
                 logger.info(f'买入{target}...')
                 order_target_value(
-                    target, self.context.stock_account.cash/len(today_to_buy))
+                    target, self.context.stock_account.cash/len(today_to_buy_list))

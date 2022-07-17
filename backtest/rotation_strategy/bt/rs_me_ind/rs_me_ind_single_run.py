@@ -6,10 +6,10 @@ strategy_name = 'rs_me_ind'
 start_date = "20140416"
 end_date = "20220701"
 
-holding_num = 3
+holding_num = 2
 sma_period = 20,
-trend_indicator_filter = 1.0,
-trend_indicator_buffer = 0.2,
+trend_indicator_filter = 3.0,
+trend_indicator_buffer = 1.0,
 rank_indicator_buffer = 1
 check_date = pd.date_range(start_date, end_date, freq='d')
 
