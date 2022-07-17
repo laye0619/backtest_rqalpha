@@ -39,6 +39,7 @@ def handle_bar(context, bar_dict):
     if pd.to_datetime(context.now.date()) not in context.check_date:
         return
     logger.info('Strategy executing...')
+    context.rs_momentum.today_total_portfolio_amount = context.stock_account.total_value
     context.rs_momentum.bar_dict = bar_dict
     context.rs_momentum.context = context
     context.rs_momentum.transction(context.rs_momentum.sort_target_list())
