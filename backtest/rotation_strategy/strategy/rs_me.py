@@ -16,7 +16,7 @@ class RSMe(RotationStrategy):
 
     def sort_target_list(self) -> pd.DataFrame():
         price_list_df = pd.DataFrame(columns=['target', 'up', 'diff_avg'])
-        sma_buffer = 30
+        sma_buffer = 35
         for target in self.target_list:
             price_df = pd.DataFrame(
                 history_bars(target, bar_count=self.sma_period+sma_buffer, frequency='1d', fields=['datetime', 'close']))
