@@ -20,10 +20,10 @@ each_period_years = 5
 test_check_date = pd.date_range(
     start_date, datetime.now().date(), freq='W-THU')
 
-holding_num = 2
+holding_num = 3
 momentum_period = 20,
-trend_indicator_filter = 0.0,
-trend_indicator_buffer = 1.0,
+trend_indicator_filter = 1.0,
+trend_indicator_buffer = 0.2,
 rank_indicator_buffer = 1
 
 strategy_file_path = f'./backtest/rotation_strategy/bt/{strategy_name}/{strategy_name}.py'
