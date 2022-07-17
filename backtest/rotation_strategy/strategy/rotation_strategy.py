@@ -40,6 +40,25 @@ class RotationStrategy(ABC):
             sorted_df (_type_): _description_
         """
         current_positions = get_positions()
+        
+        # 计算当前持仓情况与今天应有仓位总额关系
+        if len(current_positions) == self.holding_num:  # 持仓数量满额
+            # 今日调仓金额，正数为需要买入的金额，负数为需要卖出的金额
+            today_to_buy_amount = self.today_total_portfolio_amount - self.context.stock_account.market_value
+            current_positions_df = pd.DataFrame(columns=['order_book_id', 'market_value'])
+            for position in current_positions:
+                line_item_dict = {
+                    'order_book_id': position.order_book_id,
+                    'market_value': position.market_value
+                }
+                current_positions_df = pd.concat([current_positions_df, pd.DataFrame(line_item_dict, index=[0])])
+            current_positions_df['portion'] = current_positions_df['market_value'] / current_positions_df['market_value'].sum()
+            current_positions_df['today_to_buy_amount'] = today_to_buy_amount * current_positions_df['portion']
+        else:  # 持仓数量不满额
+            pass
+            
+        
+
 
         if not current_positions:  # 当前空仓，按规则买入
             logger.info(f'当前空仓，按规则买入...')
@@ -58,7 +77,6 @@ class RotationStrategy(ABC):
             for target in empty_position_to_buy['target']:
                 order_target_value(
                     target, self.today_total_portfolio_amount/len(empty_position_to_buy))
-                # order_target_percent(target, 1/len(empty_position_to_buy))
 
         else:  # 当前有持仓，需要按逻辑调仓
             # 确定当前持仓列表是否需要卖出
@@ -75,14 +93,28 @@ class RotationStrategy(ABC):
             # 卖出操作后，重新获取持仓
             current_positions = get_positions()
             # 确定当前是否需要买入
-            if len(current_positions) == self.holding_num:  # 持仓数量符合要求，不操作
+            if len(current_positions) == self.holding_num:  # 持仓数量符合要求，只进行仓位增补，不进行换仓操作
+                # 今日调仓金额，正数为需要买入的金额，负数为需要卖出的金额
+                today_to_buy_amount = self.today_total_portfolio_amount - self.context.stock_account.market_value
+                current_positions_df = pd.DataFrame(columns=['order_book_id', 'market_value'])
+                for position in current_positions:
+                    line_item_dict = {
+                        'order_book_id': position.order_book_id,
+                        'market_value': position.market_value
+                    }
+                    current_positions_df = pd.concat([current_positions_df, pd.DataFrame(line_item_dict, index=[0])])
+                current_positions_df['portion'] = current_positions_df['market_value'] / current_positions_df['market_value'].sum()
+                current_positions_df['today_to_buy_amount'] = today_to_buy_amount * current_positions_df['portion']
+                for index, line_item in current_positions_df.iterrows():
+                    order_value(
+                        line_item['order_book_id'], 
+                        line_item['today_to_buy_amount']
+                        )
                 return
+            # 处理新买入
             today_to_buy = sorted_df.loc[sorted_df['up'] > (
                 self.trend_indicator_filter+self.trend_indicator_buffer)]
 
-            if today_to_buy.empty:
-                logger.info(f'没有符合要求的标的，静待明天...')
-                return
             # 此处需要测试：如果符合trend_indicator的标的数量小于目标持仓数量，要不要买？？
             if len(today_to_buy) < self.holding_num:
                 logger.info(
