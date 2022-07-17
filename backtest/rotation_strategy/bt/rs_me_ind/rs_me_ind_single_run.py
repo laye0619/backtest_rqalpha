@@ -1,14 +1,16 @@
-from rqalpha import run_file
 import pandas as pd
+from rqalpha import run_file
 
-strategy_name = 'rs_m_style_28'
+strategy_name = 'rs_me_ind'
 
-start_date = "20130101"
+start_date = "20140416"
 end_date = "20220701"
 
-momentum_period = 20,
-trend_indicator_filter = 0.0,
-trend_indicator_buffer = 0.4,
+holding_num = 3
+sma_period = 20,
+trend_indicator_filter = 1.0,
+trend_indicator_buffer = 0.2,
+rank_indicator_buffer = 1
 check_date = pd.date_range(start_date, end_date, freq='d')
 
 strategy_file_path = f'./backtest/rotation_strategy/bt/{strategy_name}/{strategy_name}.py'
@@ -25,11 +27,13 @@ config = {
         }
     },
     "extra": {
-        "context_vars": {
+        "context_vars": {  # 未知原因，此处传进去的参数会数字显示，而不是tuple（XX，），而single file就会是tuple
             "check_date": check_date,
-            "momentum_period": momentum_period,
+            "holding_num": (holding_num,),
+            "sma_period": sma_period,
             "trend_indicator_filter": trend_indicator_filter,
             "trend_indicator_buffer": trend_indicator_buffer,
+            "rank_indicator_buffer": (rank_indicator_buffer,)
         },
         "log_level": "INFO",  # DEBUG, INFO, WARNING, ERROR
     },

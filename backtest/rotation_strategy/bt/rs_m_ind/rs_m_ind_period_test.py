@@ -13,8 +13,6 @@ from rqalpha import run
 
 strategy_name = 'rs_m_ind'
 
-start_date = "20140416"
-
 start_date = pd.to_datetime('2014-04-16')
 each_period_years = 5
 test_check_date = pd.date_range(

@@ -1,6 +1,6 @@
-"""基于动量的行业轮动策略
+"""基于动量的大小盘风格轮动策略
 """
-from backtest.rotation_strategy.strategy.rs_momentum import RSMomentum
+from backtest.rotation_strategy.strategy.rs_me import RSMe
 from rqalpha.apis import *
 
 TARGET_LIST = {
@@ -15,7 +15,7 @@ TARGET_LIST = {
 }
 
 
-def init(context):   
+def init(context):
     # 未知原因，log_level不能传入，此处手工设置
     logger.level_name = context.config.extra.log_level
     
@@ -25,10 +25,10 @@ def init(context):
     
     context.target_list = list(TARGET_LIST['ind_rotation'].keys())
 
-    context.rs_momentum = RSMomentum(
+    context.rs_me = RSMe(
         target_list=context.target_list,
         holding_num=context.holding_num[0],
-        momentum_period=context.momentum_period[0],
+        sma_period=context.sma_period[0],
         trend_indicator_filter=context.trend_indicator_filter[0],
         trend_indicator_buffer=context.trend_indicator_buffer[0],
         rank_indicator_buffer=context.rank_indicator_buffer[0]
@@ -39,6 +39,6 @@ def handle_bar(context, bar_dict):
     if pd.to_datetime(context.now.date()) not in context.check_date:
         return
     logger.info('Strategy executing...')
-    context.rs_momentum.bar_dict = bar_dict
-    context.rs_momentum.context = context
-    context.rs_momentum.transction(context.rs_momentum.sort_target_list())
+    context.rs_me.bar_dict = bar_dict
+    context.rs_me.context = context
+    context.rs_me.transction(context.rs_me.sort_target_list())

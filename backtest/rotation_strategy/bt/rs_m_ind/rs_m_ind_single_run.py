@@ -6,10 +6,10 @@ strategy_name = 'rs_m_ind'
 start_date = "20140416"
 end_date = "20220701"
 
-holding_num = 2
+holding_num = 3
 momentum_period = 20,
-trend_indicator_filter = 0.0,
-trend_indicator_buffer = 1.0,
+trend_indicator_filter = 1.0,
+trend_indicator_buffer = 0.2,
 rank_indicator_buffer = 1
 check_date = pd.date_range(start_date, end_date, freq='d')
 
@@ -46,7 +46,7 @@ config = {
             # 策略基准，该基准将用于风险指标计算和收益曲线图绘制
             #   若基准为单指数/股票，此处直接设置 order_book_id，如："000300.XSHG"
             #   若基准为复合指数，则需传入 order_book_id 和权重构成的字典，如：{"000300.XSHG": 0.2. "000905.XSHG": 0.8}
-            "benchmark": "000300.XSHG",
+            "benchmark": "399006.XSHE",
             # 当不输出 csv/pickle/plot 等内容时，关闭该项可关闭策略运行过程中部分收集数据的逻辑，用以提升性能
             "record": True,
             # 回测结果输出的文件路径，该文件为 pickle 格式，内容为每日净值、头寸、流水及风险指标等；若不设置则不输出该文件
