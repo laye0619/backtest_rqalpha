@@ -3,10 +3,6 @@ name: Run Rqalpha Backtest with Conda
 on:
   workflow_dispatch:
     inputs:
-      strategy_category:
-        description: 'strategy category'
-        required: true
-        default: 'rotation_strategy'
       strategy_name:
         description: 'strategy name'
         required: true
@@ -46,14 +42,14 @@ jobs:
 
     - name: Run backtest python file
       run: |
-        if [ ! -d ./backtest/${{ github.event.inputs.strategy_category }}/bt_report/${{ github.event.inputs.strategy_name }}/${{ github.event.inputs.backtest_type }} ]; then
-          mkdir -p ./backtest/${{ github.event.inputs.strategy_category }}/bt_report/${{ github.event.inputs.strategy_name }}/${{ github.event.inputs.backtest_type }}
+        if [ ! -d ./backtest/bt_report/${{ github.event.inputs.strategy_name }}/${{ github.event.inputs.backtest_type }} ]; then
+          mkdir -p ./backtest/bt_report/${{ github.event.inputs.strategy_name }}/${{ github.event.inputs.backtest_type }}
         else
-          rm -rf ./backtest/${{ github.event.inputs.strategy_category }}/bt_report/${{ github.event.inputs.strategy_name }}/${{ github.event.inputs.backtest_type }}/*
+          rm -rf ./backtest/bt_report/${{ github.event.inputs.strategy_name }}/${{ github.event.inputs.backtest_type }}/*
         fi
         export PYTHONPATH=$PYTHONPATH:$PWD
-        python -u ./backtest/${{ github.event.inputs.strategy_category }}/bt/${{ github.event.inputs.strategy_name }}/${{ github.event.inputs.strategy_name }}_${{ github.event.inputs.backtest_type }}.py
+        python -u ./backtest/bt/${{ github.event.inputs.strategy_name }}/${{ github.event.inputs.strategy_name }}_${{ github.event.inputs.backtest_type }}.py
     
     - name: Upload report to Home Server
       run: |
-        sshpass -p ${{ secrets.HOME_SERVER_PASS }} scp -P ${{ secrets.HOME_SERVER_PORT }} -o StrictHostKeyChecking=no ./backtest/${{ github.event.inputs.strategy_category }}/bt_report/${{ github.event.inputs.strategy_name }}/${{ github.event.inputs.backtest_type }}/*.xlsx ${{ secrets.HOME_SERVER_USERNAME }}@${{ secrets.HOME_SERVER_ADDRESS }}:/home/layewang/Downloads
+        sshpass -p ${{ secrets.HOME_SERVER_PASS }} scp -P ${{ secrets.HOME_SERVER_PORT }} -o StrictHostKeyChecking=no ./backtest/bt_report/${{ github.event.inputs.strategy_name }}/${{ github.event.inputs.backtest_type }}/*.xlsx ${{ secrets.HOME_SERVER_USERNAME }}@${{ secrets.HOME_SERVER_ADDRESS }}:/home/layewang/Downloads
