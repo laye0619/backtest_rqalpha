@@ -20,7 +20,7 @@ test_check_date = pd.date_range(
 
 sma_period = 20,
 trend_indicator_filter = 2.0,
-trend_indicator_buffer = 1.0,
+trend_indicator_buffer = 0.0,
 
 strategy_file_path = f'./backtest/bt/{strategy_name}/{strategy_name}.py'
 report_save_path = f'./backtest/bt_report/{strategy_name}/period_test'

@@ -9,7 +9,7 @@ end_date = "20220701"
 
 sma_period = 20,
 trend_indicator_filter = 2.0,
-trend_indicator_buffer = 1.0,
+trend_indicator_buffer = 0.0,
 check_date = pd.date_range(start_date, end_date, freq='d')
 
 strategy_file_path = f'./backtest/bt/{strategy_name}/{strategy_name}.py'
