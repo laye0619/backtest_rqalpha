@@ -41,25 +41,6 @@ class RotationStrategy(ABC):
         """
         current_positions = get_positions()
         
-        # 计算当前持仓情况与今天应有仓位总额关系
-        if len(current_positions) == self.holding_num:  # 持仓数量满额
-            # 今日调仓金额，正数为需要买入的金额，负数为需要卖出的金额
-            today_to_buy_amount = self.today_total_portfolio_amount - self.context.stock_account.market_value
-            current_positions_df = pd.DataFrame(columns=['order_book_id', 'market_value'])
-            for position in current_positions:
-                line_item_dict = {
-                    'order_book_id': position.order_book_id,
-                    'market_value': position.market_value
-                }
-                current_positions_df = pd.concat([current_positions_df, pd.DataFrame(line_item_dict, index=[0])])
-            current_positions_df['portion'] = current_positions_df['market_value'] / current_positions_df['market_value'].sum()
-            current_positions_df['today_to_buy_amount'] = today_to_buy_amount * current_positions_df['portion']
-        else:  # 持仓数量不满额
-            pass
-            
-        
-
-
         if not current_positions:  # 当前空仓，按规则买入
             logger.info(f'当前空仓，按规则买入...')
             empty_position_to_buy = sorted_df.loc[sorted_df['up'] > (
@@ -130,6 +111,7 @@ class RotationStrategy(ABC):
                 today_to_buy_list = list(
                     today_to_buy.iloc[:(self.holding_num-len(today_holding_list)), ]['target'])
             # 按照今天应有仓位总额，以及现有仓位总额，计算可用资金
+            # TODO: 此处需要修改，不能用整体股票账户持仓金额变量，应该用当前target_list持仓金额
             total_available_amount = self.today_total_portfolio_amount - \
                 self.context.stock_account.market_value
             for target in today_to_buy_list:
