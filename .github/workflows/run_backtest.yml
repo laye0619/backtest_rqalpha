@@ -28,7 +28,7 @@ jobs:
         DEBIAN_FRONTEND: noninteractive
       run: |
         sudo -E apt-get -qq update
-        sudo -E apt-get -qq install sshpass wget
+        sudo -E apt-get -qq install sshpass wget python3-wheel
         wget https://onboardcloud.dl.sourceforge.net/project/ta-lib/ta-lib/0.4.0/ta-lib-0.4.0-src.tar.gz
         tar -xzvf ./ta-lib-0.4.0-src.tar.gz
         cd ta-lib
