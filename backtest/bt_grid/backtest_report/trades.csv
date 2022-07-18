@@ -1,2 +1,0 @@
-datetime,datetime,trading_datetime,order_book_id,symbol,side,position_effect,exec_id,tax,commission,last_quantity,last_price,order_id,transaction_cost
-2016-09-30 15:00:00,2016-09-30 15:00:00,2016-09-30 15:00:00,512880.XSHG,国泰证券ETF,BUY,OPEN,16571808060000,0,47.98612800000001,294900,1.017,16571808060001,47.98612800000001
