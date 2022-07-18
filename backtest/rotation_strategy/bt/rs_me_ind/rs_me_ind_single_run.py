@@ -8,7 +8,7 @@ end_date = "20220701"
 
 holding_num = 2
 sma_period = 20,
-trend_indicator_filter = 3.0,
+trend_indicator_filter = 2.0,
 trend_indicator_buffer = 1.0,
 rank_indicator_buffer = 1
 check_date = pd.date_range(start_date, end_date, freq='d')
