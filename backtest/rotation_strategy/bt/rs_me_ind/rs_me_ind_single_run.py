@@ -4,6 +4,7 @@ from rqalpha import run_file
 strategy_name = 'rs_me_ind'
 
 start_date = "20140416"
+# start_date = "20151001"
 end_date = "20220701"
 
 holding_num = 2

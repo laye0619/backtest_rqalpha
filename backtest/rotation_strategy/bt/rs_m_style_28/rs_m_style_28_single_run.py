@@ -3,7 +3,8 @@ import pandas as pd
 
 strategy_name = 'rs_m_style_28'
 
-start_date = "20130101"
+start_date = "20140416"
+# start_date = "20151001"
 end_date = "20220701"
 
 momentum_period = 20,
