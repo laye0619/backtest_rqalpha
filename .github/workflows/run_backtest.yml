@@ -29,9 +29,12 @@ jobs:
       run: |
         sudo -E apt-get -qq update
         sudo -E apt-get -qq install sshpass wget
-
-    - name: SSH connection to Actions
-      uses: P3TERX/ssh2actions@v1.0.0
+        wget https://onboardcloud.dl.sourceforge.net/project/ta-lib/ta-lib/0.4.0/ta-lib-0.4.0-src.tar.gz
+        tar -xzvf ./ta-lib-0.4.0-src.tar.gz
+        cd ta-lib
+        ./configure --prefix=/usr
+        make
+        cd ..
 
     - name: Set up Python 3.9
       uses: actions/setup-python@v4
@@ -41,7 +44,7 @@ jobs:
     - name: Install python dependencies
       run: |
         python -m pip install --upgrade pip
-        pip install rqalpha pandas
+        pip install rqalpha pandas TA-Lib
         rqalpha download-bundle
 
     - name: Run backtest python file
