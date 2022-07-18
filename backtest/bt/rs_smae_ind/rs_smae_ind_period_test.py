@@ -25,7 +25,7 @@ trend_indicator_buffer = 1.0,
 rank_indicator_buffer = 1
 
 strategy_file_path = f'./backtest/bt/{strategy_name}/{strategy_name}.py'
-report_save_path = f'./backtest/bt_report/{strategy_name}/single_run'
+report_save_path = f'./backtest/bt_report/{strategy_name}/period_test'
 
 tasks = []
 for start_date in test_check_date:

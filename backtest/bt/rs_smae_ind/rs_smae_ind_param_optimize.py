@@ -23,7 +23,7 @@ start_date = "20140416"
 end_date = "20220701"
 
 strategy_file_path = f'./backtest/bt/{strategy_name}/{strategy_name}.py'
-report_save_path = f'./backtest/bt_report/{strategy_name}/single_run'
+report_save_path = f'./backtest/bt_report/{strategy_name}/param_optimize'
 
 check_date_list = [
     pd.date_range(start_date, end_date, freq='d'),

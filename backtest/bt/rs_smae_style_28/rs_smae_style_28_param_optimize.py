@@ -2,21 +2,22 @@
 批量回测任务
 测试不同的参数在固定周期内（start_date & end_date）的表现，从而确定最优参数
     1 不同时间检查频率，每天检查，每3天检查，每周检查，半月检查等等
-    2 不同momentum_period，range(10, 31, 5)
-    3 不同trend_indicator_filter，range(-2, 3, 1)
-    4 不同trend_indicator_buffer，range(0, 11, 2) /10
+    2 不同sma_period，range(10, 31, 5)
+    3 不同trend_indicator_filter，range(1, 5, 1)
+    4 不同trend_indicator_buffer，range(0, 3, 1)
 """
 
 import concurrent.futures
-import backtest.utils.bt_analysis_helper as bt_analysis_helper
 import multiprocessing
 
+import backtest.utils.bt_analysis_helper as bt_analysis_helper
 import pandas as pd
 from rqalpha import run
 
-strategy_name = 'rs_m_style_28'
+strategy_name = 'rs_smae_style_28'
 
-start_date = "20130101"
+
+start_date = "20140416"
 end_date = "20220701"
 
 strategy_file_path = f'./backtest/bt/{strategy_name}/{strategy_name}.py'
@@ -33,14 +34,14 @@ check_date_list = [
 
 tasks = []
 for check_date in check_date_list:
-    for momentum_period in range(10, 31, 5):
-        for trend_indicator_filter in range(-2, 3, 1):
-            for trend_indicator_buffer in range(0, 11, 2):
+    for sma_period in range(10, 31, 5):
+        for trend_indicator_filter in range(1, 5, 1):
+            for trend_indicator_buffer in range(0, 3, 1):
                 config = {
                     "extra": {
                         "context_vars": {  # 未知原因，此处传进去的参数会数字显示，而不是tuple（XX，），而single file就会是tuple
                             "check_date": check_date,
-                            "momentum_period": (momentum_period,),
+                            "sma_period": (sma_period,),
                             "trend_indicator_filter": (trend_indicator_filter,),
                             "trend_indicator_buffer": (trend_indicator_buffer / 10,),
                         },
@@ -69,7 +70,7 @@ for check_date in check_date_list:
                             # 当不输出 csv/pickle/plot 等内容时，关闭该项可关闭策略运行过程中部分收集数据的逻辑，用以提升性能
                             "record": True,
                             # 回测结果输出的文件路径，该文件为 pickle 格式，内容为每日净值、头寸、流水及风险指标等；若不设置则不输出该文件
-                            "output_file": f'{report_save_path}/{strategy_name}.{check_date.freq.freqstr}.{momentum_period}.{trend_indicator_filter}.{trend_indicator_buffer}.pkl',
+                            "output_file": f'{report_save_path}/{strategy_name}.{check_date.freq.freqstr}.{sma_period}.{trend_indicator_filter}.{trend_indicator_buffer}.{holding_num}.{rank_indicator_buffer}.pkl',
                             # 回测报告的数据目录，报告为 csv 格式；若不设置则不输出报告
                             "report_save_path": None,
                             # 是否在回测结束后绘制收益曲线图

@@ -10,7 +10,7 @@ on:
       strategy_name:
         description: 'strategy name'
         required: true
-        default: 'rs_m_ind'
+        default: 'rs_smae_style_28'
       backtest_type:
         description: 'param_optimize or period_test'
         required: true

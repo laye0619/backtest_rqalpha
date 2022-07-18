@@ -23,7 +23,7 @@ test_check_date = pd.date_range(
     start_date, datetime.now().date(), freq='W-THU')
 
 strategy_file_path = f'./backtest/bt/{strategy_name}/{strategy_name}.py'
-report_save_path = f'./backtest/bt_report/{strategy_name}/single_run'
+report_save_path = f'./backtest/bt_report/{strategy_name}/period_test'
 
 tasks = []
 for start_date in test_check_date:

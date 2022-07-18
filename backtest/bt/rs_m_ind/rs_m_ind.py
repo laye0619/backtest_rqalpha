@@ -2,17 +2,7 @@
 """
 from backtest.strategy.rs_m import RotationStrategyMomentum
 from rqalpha.apis import *
-
-TARGET_LIST = {
-    'ind_rotation': {
-        '399975.XSHE': '证券公司',  # '20130715'
-        '000819.XSHG':'有色金属',  # '20120509'
-        '000993.XSHG':'全指信息',  # '20110802'
-        '399971.XSHE':'中证传媒',  # '20140415'
-        '399932.XSHE':'中证消费',  # '20090703'
-        '399913.XSHE':'300医药',  # '20070702'
-    }
-}
+from backtest.utils import const
 
 
 def init(context):   
@@ -23,7 +13,7 @@ def init(context):
     # 1.不变参数在此设定
     # 2.可变参数通过config.extra.context_vars来传入，下面RotationStrategyMomentum对象从context中读取
     
-    context.target_list = list(TARGET_LIST['ind_rotation'].keys())
+    context.target_list = list(const.TARGET_LIST['ind_rotation'].keys())
 
     context.rs_m_ind = RotationStrategyMomentum(
         target_list=context.target_list,
