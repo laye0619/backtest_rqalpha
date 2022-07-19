@@ -24,8 +24,8 @@ class BalanceStrategyVoQ(BalanceStrategy):
         for target, vo_df in self.__vo_df_dict.items():
             pct = vo_df.loc[today_str, 'std_pct']
             pct_list.append(0.5 if pd.isna(pct) else pct)
-        stock_position = mean(pct_list)
-        return {'stock': stock_position, 'bond': (1-stock_position)}
+        bond_position = mean(pct_list)
+        return {'stock': (1-bond_position), 'bond': bond_position}
 
     def get_vo(self):
         # 计算波动率表
