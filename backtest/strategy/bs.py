@@ -49,10 +49,12 @@ class BalanceStrategy(ABC):
             else:  # 需要买入债券至当天目标仓位，为避免资金不够，先记账（待交易账簿），股票操作后，在买入
                 today_to_buy_value_dict[bond_order_book_id] = today_total_amount * \
                     bond_position_diff
+            # 更新当天股票应有仓位金额，调用股票交易
+            # 如果触发了调仓，则根据目标仓位比例更新股票仓位，否则就维持原比例
+            stock_target_amount = today_total_amount * calculated_position_dict['stock']
+        else:
+            stock_target_amount = today_total_amount * (1-bond_current_position)
 
-        # 更新当天股票应有仓位金额，调用股票交易
-        stock_target_amount = today_total_amount * \
-            calculated_position_dict['stock']
         self.stock_strategy.today_total_portfolio_amount = stock_target_amount
         self.stock_strategy.bar_dict = self.bar_dict
         self.stock_strategy.context = self.context
