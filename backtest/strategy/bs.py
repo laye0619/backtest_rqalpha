@@ -45,7 +45,7 @@ class BalanceStrategy(ABC):
         today_to_buy_value_dict = {}  # 待交易账簿
         if abs(bond_position_diff) > self.position_diff_threshold:  # 仓位变化过限，触发调仓
             if bond_position_diff < 0:  # 需要卖出债券至当天目标仓位
-                order_target_percent(bond_target_position)
+                order_target_percent(bond_order_book_id, bond_target_position)
             else:  # 需要买入债券至当天目标仓位，为避免资金不够，先记账（待交易账簿），股票操作后，在买入
                 today_to_buy_value_dict[bond_order_book_id] = today_total_amount * \
                     bond_position_diff

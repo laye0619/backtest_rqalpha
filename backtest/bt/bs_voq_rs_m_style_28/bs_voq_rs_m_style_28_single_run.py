@@ -1,7 +1,7 @@
 from rqalpha import run_file
 import pandas as pd
 
-strategy_name = 'bs_test_rs_m_style_28'
+strategy_name = 'bs_voq_rs_m_style_28'
 
 start_date = "20140416"
 # start_date = "20151001"

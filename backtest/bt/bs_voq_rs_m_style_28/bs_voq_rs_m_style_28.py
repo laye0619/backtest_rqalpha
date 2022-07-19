@@ -1,7 +1,8 @@
-from backtest.strategy.bs_test import BalanceStrategyTest
+from backtest.strategy.bs_voq import BalanceStrategyVoQ
 from backtest.strategy.rs_m import RotationStrategyMomentum
 from rqalpha.apis import *
 from backtest.utils import const
+
 
 
 def init(context):
@@ -22,11 +23,13 @@ def init(context):
         trend_indicator_filter=context.trend_indicator_filter[0],
         trend_indicator_buffer=context.trend_indicator_buffer[0],
     )
-
-    context.bs_test_rs_m_style_28 = BalanceStrategyTest(
+    
+    context.bs_test_rs_m_style_28 = BalanceStrategyVoQ(
         stock_strategy=context.rs_m_style_28,
         position_diff_threshold=0.1,
+        vo_period=30
     )
+    context.bs_test_rs_m_style_28.get_vo()  # 初始化时生成波动率表
 
 
 def handle_bar(context, bar_dict):

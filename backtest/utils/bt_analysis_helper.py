@@ -45,7 +45,7 @@ def caculate_vo_ts(data: pd.DataFrame, std_period: int = 30, sma_period=20) -> p
         sma_period (int, optional): _description_. Defaults to 20.
 
     Returns:
-        pd.DataFrame: column=['close', 'std', 'sma_std', 'std_pct'], index='date'
+        pd.DataFrame: column=['close', 'std', 'sma_std', 'std_pct'], index='date'-######
     """
 
     # 计算小周期波动率（标准差）
