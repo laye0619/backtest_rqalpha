@@ -39,7 +39,7 @@ for start_date in test_check_date:
             "frequency": "1d",
             "matching_type": "current_bar",
             "accounts": {
-                "STOCK": 1000 * 10000
+                "STOCK": 10000 * 10000
             },
             "strategy_file": strategy_file_path
         },

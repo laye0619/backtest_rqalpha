@@ -40,7 +40,7 @@ class RotationStrategy(ABC):
             sorted_df (_type_): _description_
         """
         current_positions = self.__get_stock_positions()
-        
+
         if not current_positions:  # 当前空仓，按规则买入
             logger.info(f'当前空仓，按规则买入...')
             empty_position_to_buy = sorted_df.loc[sorted_df['up'] > (
@@ -78,19 +78,26 @@ class RotationStrategy(ABC):
                 # 今日调仓金额，正数为需要买入的金额，负数为需要卖出的金额
                 today_to_buy_amount = self.today_total_portfolio_amount - sum(
                     [position.market_value for position in self.__get_stock_positions()])
-                current_positions_df = pd.DataFrame(columns=['order_book_id', 'market_value'])
+                current_positions_df = pd.DataFrame(
+                    columns=['order_book_id', 'market_value'])
                 for position in current_positions:
                     line_item_dict = {
                         'order_book_id': position.order_book_id,
                         'market_value': position.market_value
                     }
-                    current_positions_df = pd.concat([current_positions_df, pd.DataFrame(line_item_dict, index=[0])])
-                current_positions_df['portion'] = current_positions_df['market_value'] / current_positions_df['market_value'].sum()
-                current_positions_df['today_to_buy_amount'] = today_to_buy_amount * current_positions_df['portion']
+                    current_positions_df = pd.concat(
+                        [current_positions_df, pd.DataFrame(line_item_dict, index=[0])])
+                current_positions_df['portion'] = current_positions_df['market_value'] / \
+                    current_positions_df['market_value'].sum()
+                current_positions_df['today_to_buy_amount'] = today_to_buy_amount * \
+                    current_positions_df['portion']
                 for index, line_item in current_positions_df.iterrows():
-                    order_value(
-                        line_item['order_book_id'], 
-                        line_item['today_to_buy_amount']
+                    share_size = line_item['today_to_buy_amount'] / \
+                        self.bar_dict[line_item['order_book_id']].close
+                    if abs(share_size) > 100:  # 交易小于10的自动忽略
+                        order_value(
+                            line_item['order_book_id'],
+                            line_item['today_to_buy_amount']
                         )
                 return
             # 处理新买入
@@ -112,7 +119,6 @@ class RotationStrategy(ABC):
                 today_to_buy_list = list(
                     today_to_buy.iloc[:(self.holding_num-len(today_holding_list)), ]['target'])
             # 按照今天应有仓位总额，以及现有仓位总额，计算可用资金
-            # TODO: 此处需要修改，不能用整体股票账户持仓金额变量，应该用当前target_list持仓金额
             stock_total_value = 0
             for target in self.target_list:
                 stock_total_value += get_position(target).market_value
@@ -121,7 +127,6 @@ class RotationStrategy(ABC):
                 logger.info(f'买入{target}...')
                 order_target_value(
                     target, total_available_amount/len(today_to_buy_list))
-        
-    
-    def __get_stock_positions(self)->list:
+
+    def __get_stock_positions(self) -> list:
         return [position for position in get_positions() if position.order_book_id in self.target_list]

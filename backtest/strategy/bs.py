@@ -23,7 +23,7 @@ class BalanceStrategy(ABC):
     context: StrategyContext = field(
         default_factory=StrategyContext)  # 回测框架中的context对象
     bar_dict: dict = field(default_factory=dict)  # 交易时点的K线
-    _init_fired:bool = False  # 区分是否是初始仓位
+    _init_fired: bool = False  # 区分是否是初始仓位
 
     @abstractmethod
     def calculate_position(self) -> dict:
@@ -61,8 +61,9 @@ class BalanceStrategy(ABC):
         # 交易当天待交易账簿
         for order_book_id, value in today_to_buy_value_dict.items():
             if self.context.stock_account.cash < value:
-                 if abs(self.context.stock_account.cash/value-1)>0.1:
+                if abs(self.context.stock_account.cash/value-1) > 0.1:
                     raise Exception()
-                logger.warn(f'No enough cash for buying RMB {value}, buy {self.context.stock_account.cash} instead')
+                logger.warn(
+                    f'No enough cash for buying RMB {value}, buy {self.context.stock_account.cash} instead')
                 value = self.context.stock_account.cash
             order_value(order_book_id, value)

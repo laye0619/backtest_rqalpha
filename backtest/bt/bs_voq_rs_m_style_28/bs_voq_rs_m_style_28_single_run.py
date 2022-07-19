@@ -12,6 +12,9 @@ trend_indicator_filter = 0.0,
 trend_indicator_buffer = 0.4,
 check_date = pd.date_range(start_date, end_date, freq='d')
 
+position_diff_threshold = 0.1
+vo_period = 30
+
 strategy_file_path = f'./backtest/bt/{strategy_name}/{strategy_name}.py'
 report_save_path = f'./backtest/bt_report/{strategy_name}/single_run'
 
@@ -22,7 +25,7 @@ config = {
         "frequency": "1d",
         "matching_type": "current_bar",
         "accounts": {
-            "STOCK": 1000 * 10000
+            "STOCK": 10000 * 10000
         }
     },
     "extra": {
@@ -31,6 +34,8 @@ config = {
             "momentum_period": momentum_period,
             "trend_indicator_filter": trend_indicator_filter,
             "trend_indicator_buffer": trend_indicator_buffer,
+            "position_diff_threshold": position_diff_threshold,
+            "vo_period": vo_period
         },
         "log_level": "WARNING",  # DEBUG, INFO, WARNING, ERROR
     },

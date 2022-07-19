@@ -13,30 +13,30 @@ def init(context):
     # 1.不变参数在此设定
     # 2.可变参数通过config.extra.context_vars来传入，下面RSMomentum对象从context中读取
 
-    context.target_list = list(const.TARGET_LIST['style_28'].keys())
-    context.holding_num = 1,
+    context.target_list = list(const.TARGET_LIST['ind_rotation'].keys())
 
-    context.rs_m_style_28 = RotationStrategyMomentum(
+    context.rs_m_ind = RotationStrategyMomentum(
         target_list=context.target_list,
         holding_num=context.holding_num[0],
         momentum_period=context.momentum_period[0],
         trend_indicator_filter=context.trend_indicator_filter[0],
         trend_indicator_buffer=context.trend_indicator_buffer[0],
+        rank_indicator_buffer=context.rank_indicator_buffer[0]
     )
     
-    context.bs_voq_rs_m_style_28 = BalanceStrategyVoQ(
-        stock_strategy=context.rs_m_style_28,
+    context.bs_voq_rs_m_ind = BalanceStrategyVoQ(
+        stock_strategy=context.rs_m_ind,
         position_diff_threshold=context.position_diff_threshold,
         vo_period=context.vo_period,
     )
-    context.bs_voq_rs_m_style_28.get_vo()  # 初始化时生成波动率表
+    context.bs_voq_rs_m_ind.get_vo()  # 初始化时生成波动率表
 
 
 def handle_bar(context, bar_dict):
     if pd.to_datetime(context.now.date()) not in context.check_date:
         return
     logger.info('Strategy executing...')
-    context.bs_voq_rs_m_style_28.bar_dict = bar_dict
-    context.bs_voq_rs_m_style_28.context = context
-    context.bs_voq_rs_m_style_28.transction(
-        context.bs_voq_rs_m_style_28.calculate_position())
+    context.bs_voq_rs_m_ind.bar_dict = bar_dict
+    context.bs_voq_rs_m_ind.context = context
+    context.bs_voq_rs_m_ind.transction(
+        context.bs_voq_rs_m_ind.calculate_position())

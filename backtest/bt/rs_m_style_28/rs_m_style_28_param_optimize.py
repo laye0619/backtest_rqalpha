@@ -52,7 +52,7 @@ for check_date in check_date_list:
                         "frequency": "1d",
                         "matching_type": "current_bar",
                         "accounts": {
-                            "STOCK": 1000 * 10000
+                            "STOCK": 10000 * 10000
                         },
                         "strategy_file": strategy_file_path
                     },

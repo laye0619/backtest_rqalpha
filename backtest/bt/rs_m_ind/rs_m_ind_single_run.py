@@ -24,7 +24,7 @@ config = {
         "frequency": "1d",
         "matching_type": "current_bar",
         "accounts": {
-            "STOCK": 1000 * 10000
+            "STOCK": 10000 * 10000
         }
     },
     "extra": {
@@ -36,7 +36,7 @@ config = {
             "trend_indicator_buffer": trend_indicator_buffer,
             "rank_indicator_buffer": (rank_indicator_buffer,)
         },
-        "log_level": "INFO",  # DEBUG, INFO, WARNING, ERROR
+        "log_level": "WARNING",  # DEBUG, INFO, WARNING, ERROR
     },
     "mod": {
         "sys_progress": {

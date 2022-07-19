@@ -22,7 +22,7 @@ config = {
         "frequency": "1d",
         "matching_type": "current_bar",
         "accounts": {
-            "STOCK": 1000 * 10000
+            "STOCK": 10000 * 10000
         }
     },
     "extra": {
