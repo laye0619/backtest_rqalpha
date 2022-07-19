@@ -3,6 +3,9 @@ import pandas as pd
 import numpy as np
 import talib
 import glob
+import pymongo
+import pytz
+from backtest.utils import const
 
 
 def get_analysis_result(start_date, end_date, pkl_save_path) -> pd.DataFrame:
@@ -56,7 +59,7 @@ def caculate_vo_ts(data: pd.DataFrame, std_period: int = 30, sma_period=20) -> p
         std = std_df['Log returns'].std()
         data.loc[std_df.iloc[0].name, 'std'] = std
     data['sma_std'] = talib.SMA(data['std'].sort_index(ascending=True), 20)
-    
+
     # 计算小周期分位数
     pct_list = []
     for i in range(0, len(data)-250*5):
@@ -64,3 +67,57 @@ def caculate_vo_ts(data: pd.DataFrame, std_period: int = 30, sma_period=20) -> p
         pct_df['pct'] = pct_df['std'].rank(pct=True)
         data.loc[pct_df.iloc[0].name, 'std_pct'] = pct_df.iloc[0]['pct']
     return data
+
+
+def caculate_va_lxr(target: str, date: str, method: str = 'median', pct_period: str = 'y5'):
+    """通过mongodb查询lxr的指数估值分位数表
+
+    Args:
+        target (str): 六位代码，例如399001
+        date (str): 六位数字，例如20150104
+        method (str, optional): ['median', 'mcw', 'ewpvo', 'ew', 'avg']. Defaults to 'median'.
+        pct_period (str, optional): ['y10', 'y5']. Defaults to 'y5'.
+    """
+    # 此处需要单独处理中证消费：lxr中只有上海中证消费000932，没有深圳中证消费399932。这两个是同一指数
+    if target[:6] == '399932':
+        target = '000932'
+    elif target[:6] == '399913':
+        target = '000913'
+    lxr_record = db_get_dict_from_mongodb(
+        mongo_db_name=const.MONGODB_DB_LXR,
+        col_name=const.MONGODB_COL_LXR_INDEX,
+        query_dict={
+            'stockCode': target,
+            'date': date
+        }
+    )
+    if len(lxr_record) != 1:
+        raise ValueError('数据库中不存在数据或存在多条记录，有错误！')
+
+    pe_pct = lxr_record[0]['pe_ttm'][pct_period][method]['cvpos']
+    pb_pct = lxr_record[0]['pb'][pct_period][method]['cvpos']
+    return pe_pct, pb_pct
+
+
+def db_get_dict_from_mongodb(mongo_db_name: str, col_name: str,
+                             query_dict: dict = {}, field_dict: dict = {}, inc_id: bool = False):
+    '''
+
+    :param mongo_db_name:
+    :param col_name:
+    :param query_dict:
+    :param field_dict: {'column1':1, 'column2':1}
+    :return:
+    '''
+    c = pymongo.MongoClient(
+        host=const.MONGODB_LINK,
+        tz_aware=True,
+        tzinfo=pytz.timezone('Asia/Shanghai')
+    )
+    db = c[mongo_db_name]
+    db_col = db[col_name]
+    if not inc_id:
+        field_dict['_id'] = 0
+    result_dict_list = [x for x in db_col.find(query_dict, field_dict)]
+    return result_dict_list
+

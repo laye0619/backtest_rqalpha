@@ -15,3 +15,8 @@ TARGET_LIST = {
         '000012.XSHG': '国债指数'
     }
 }
+
+MONGODB_LINK = "mongodb://layewang:toorroot!@mongo:27017/"
+MONGODB_DB_LXR = 'db_lixingren'
+MONGODB_COL_LXR_SW_IND = 'sw_ind'
+MONGODB_COL_LXR_INDEX = 'index'

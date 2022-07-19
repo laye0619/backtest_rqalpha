@@ -1,3 +1,5 @@
 rqalpha
 pandas
 autopep8
+pymongo
+tushare

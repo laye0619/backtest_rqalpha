@@ -1,5 +1,6 @@
 from abc import ABC, abstractmethod
 from dataclasses import dataclass, field
+from statistics import mean
 
 from rqalpha.apis import *
 
@@ -32,9 +33,14 @@ class RotationStrategy(ABC):
         """处理逻辑：
             先处理空仓情况
             再处理有持仓情况：
-                1. 计算当前持仓情况与今天应有仓位总额关系，计算当前需要调仓计划，存入‘调仓暂存表’
-                2. 检查今日持仓标的，是否有不符合要求的标的，进行卖出操作，并删除‘调仓暂存表’中对应的标的
-                3. 根据排名表，结合今日剩余持仓，确定今天需要买入的标的，结合‘调仓暂存表’，确定需要买入的金额，进行买入操作
+                1. 首先检查持仓中有哪些不符合条件需要卖出的。
+                2. 调仓操作：建立仓位操作表，如果持仓数量不满，则根据现有持仓标的金额平均值补充虚拟持仓标的
+                    -target- -持仓金额- -持仓比例- -今日目标金额-
+                    -标的1-   -金额-    -比例-
+                    -标的2-   -金额-    -比例-
+                    -虚拟标的- -金额-    -比例-
+                3. 根据今日目标股票总金额，按比例分配至不同标的（今日目标金额）
+                4. 对比标的持仓金额和今日目标金额，操作买卖（数量不足100不操作）
 
         Args:
             sorted_df (_type_): _description_
@@ -71,62 +77,80 @@ class RotationStrategy(ABC):
                     logger.info(
                         f'{position.order_book_id}不符合策略持仓条件，需要全部卖出...')
                     order_target_percent(position.order_book_id, 0)
-            # 卖出操作后，重新获取持仓
-            current_positions = self.__get_stock_positions()
-            # 确定当前是否需要买入
-            if len(current_positions) == self.holding_num:  # 持仓数量符合要求，只进行仓位增补，不进行换仓操作
-                # 今日调仓金额，正数为需要买入的金额，负数为需要卖出的金额
-                today_to_buy_amount = self.today_total_portfolio_amount - sum(
-                    [position.market_value for position in self.__get_stock_positions()])
-                current_positions_df = pd.DataFrame(
-                    columns=['order_book_id', 'market_value'])
-                for position in current_positions:
-                    line_item_dict = {
-                        'order_book_id': position.order_book_id,
-                        'market_value': position.market_value
-                    }
-                    current_positions_df = pd.concat(
-                        [current_positions_df, pd.DataFrame(line_item_dict, index=[0])])
-                current_positions_df['portion'] = current_positions_df['market_value'] / \
-                    current_positions_df['market_value'].sum()
-                current_positions_df['today_to_buy_amount'] = today_to_buy_amount * \
-                    current_positions_df['portion']
-                for index, line_item in current_positions_df.iterrows():
-                    share_size = line_item['today_to_buy_amount'] / \
-                        self.bar_dict[line_item['order_book_id']].close
-                    if abs(share_size) > 100:  # 交易小于10的自动忽略
-                        order_value(
-                            line_item['order_book_id'],
-                            line_item['today_to_buy_amount']
-                        )
-                return
-            # 处理新买入
-            today_to_buy = sorted_df.loc[sorted_df['up'] > (
-                self.trend_indicator_filter+self.trend_indicator_buffer)]
 
-            # 此处需要测试：如果符合trend_indicator的标的数量小于目标持仓数量，要不要买？？
-            if len(today_to_buy) < self.holding_num:
-                logger.info(
-                    f'符合要求的标的数量：{len(today_to_buy)}小于目标持仓量：{self.holding_num}，不操作，静待明天...')
-                return
-            ######
-            today_to_buy_list = list(
-                today_to_buy.iloc[:self.holding_num, ]['target'])
-            today_holding_list = [x.order_book_id for x in current_positions]
-            today_to_buy_list = list(
-                set(today_to_buy_list).difference(set(today_holding_list)))
-            if (len(today_to_buy_list)+len(today_holding_list)) > self.holding_num:  # 处理购买后超过持仓上限的情形
+            current_positions = self.__get_stock_positions()  # 卖出后重新获取仓位
+            position_change_df = pd.DataFrame(
+                columns=['order_book_id', 'holding_amount', 'holding_portion', 'today_target_amount'])
+            for position in current_positions:  # 将当前持仓填入
+                line_item_dict = {
+                    'order_book_id': position.order_book_id,
+                    'holding_amount': position.market_value,
+                    'holding_portion': 0.0,
+                    'today_target_amount': 0.0
+                }
+                position_change_df = pd.concat(
+                    [position_change_df, pd.DataFrame(line_item_dict, index=[0])])
+            if len(position_change_df) < self.holding_num:  # 持仓数量不足，加入虚拟持仓位（为方便计算比例）
+                if position_change_df.empty:
+                    holding_amount = 1
+                else:
+                    holding_amount = mean(
+                        [holding['holding_amount'] for _, holding in position_change_df.iterrows()])
+                for i in range(self.holding_num-len(position_change_df)):
+                    line_item_dict = {
+                        'order_book_id': f'V{i}',
+                        'holding_amount': holding_amount,
+                        'holding_portion': 0.0,
+                        'today_target_amount': 0.0
+                    }
+                    position_change_df = pd.concat(
+                        [position_change_df, pd.DataFrame(line_item_dict, index=[0])])
+
+            # 计算当前持仓比例
+            position_change_df['holding_portion'] = position_change_df['holding_amount'] / \
+                position_change_df['holding_amount'].sum()
+            # 填入今天应有仓位
+            position_change_df['today_target_amount'] = self.today_total_portfolio_amount * \
+                position_change_df['holding_portion']
+
+            # 调整现有真实仓位
+            for index, holding_position in position_change_df.iterrows():
+                if holding_position['order_book_id'].startswith('V'):  # 忽略虚拟仓位
+                    continue
+                share_amount = abs(holding_position['today_target_amount']-holding_position['holding_amount']
+                                   )/self.bar_dict[holding_position['order_book_id']].last
+                if share_amount > 100:  # 交易量在100以上才操作，减少操作次数
+                    order_target_value(
+                        holding_position['order_book_id'], holding_position['today_target_amount'])
+
+            current_positions = self.__get_stock_positions()
+            if len(current_positions) < self.holding_num:  # 处理完真实仓位后，如果仍然不满
+                today_to_buy = sorted_df.loc[sorted_df['up'] > (
+                    self.trend_indicator_filter+self.trend_indicator_buffer)]
+                if len(today_to_buy) < self.holding_num:  # 符合要求数量小于持仓数量，说明形式不好，不操作
+                    logger.info(
+                        f'符合要求的标的数量：{len(today_to_buy)}小于目标持仓量：{self.holding_num}，不操作，静待明天...')
+                    return
                 today_to_buy_list = list(
-                    today_to_buy.iloc[:(self.holding_num-len(today_holding_list)), ]['target'])
-            # 按照今天应有仓位总额，以及现有仓位总额，计算可用资金
-            stock_total_value = 0
-            for target in self.target_list:
-                stock_total_value += get_position(target).market_value
-            total_available_amount = self.today_total_portfolio_amount - stock_total_value
-            for target in today_to_buy_list:
-                logger.info(f'买入{target}...')
-                order_target_value(
-                    target, total_available_amount/len(today_to_buy_list))
+                    today_to_buy.iloc[:self.holding_num, ]['target'])
+                today_holding_list = [
+                    x.order_book_id for x in current_positions]
+                today_to_buy_list = list(
+                    set(today_to_buy_list).difference(set(today_holding_list)))
+                if (len(today_to_buy_list)+len(today_holding_list)) > self.holding_num:  # 处理购买后超过持仓上限的情形
+                    today_to_buy_list = list(
+                        today_to_buy.iloc[:(self.holding_num-len(today_holding_list)), ]['target'])
+                v_position_df = position_change_df[position_change_df['order_book_id'].str.startswith(
+                    'V')].reset_index(drop=True)
+                if len(today_to_buy_list) != len(v_position_df):
+                    raise Exception('数量有误，程序错误！')
+                v_position_df['new_target'] = today_to_buy_list
+                for index, row in v_position_df.iterrows():
+                    share_amount = abs(
+                        row['today_target_amount']-row['holding_amount'])/self.bar_dict[row['new_target']].last
+                    if share_amount > 100:  # 交易量在100以上才操作，减少操作次数
+                        order_target_value(
+                            row['new_target'], row['today_target_amount'])
 
     def __get_stock_positions(self) -> list:
         return [position for position in get_positions() if position.order_book_id in self.target_list]
