@@ -61,5 +61,8 @@ class BalanceStrategy(ABC):
         # 交易当天待交易账簿
         for order_book_id, value in today_to_buy_value_dict.items():
             if self.context.stock_account.cash < value:
-                logger.error(f'No enough cash for buying RMB {value}')
+                 if abs(self.context.stock_account.cash/value-1)>0.1:
+                    raise Exception()
+                logger.warn(f'No enough cash for buying RMB {value}, buy {self.context.stock_account.cash} instead')
+                value = self.context.stock_account.cash
             order_value(order_book_id, value)
