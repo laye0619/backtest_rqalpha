@@ -39,7 +39,7 @@ class RotationStrategy(ABC):
         Args:
             sorted_df (_type_): _description_
         """
-        current_positions = get_positions()
+        current_positions = self.__get_stock_positions()
         
         if not current_positions:  # 当前空仓，按规则买入
             logger.info(f'当前空仓，按规则买入...')
@@ -72,11 +72,12 @@ class RotationStrategy(ABC):
                         f'{position.order_book_id}不符合策略持仓条件，需要全部卖出...')
                     order_target_percent(position.order_book_id, 0)
             # 卖出操作后，重新获取持仓
-            current_positions = get_positions()
+            current_positions = self.__get_stock_positions()
             # 确定当前是否需要买入
             if len(current_positions) == self.holding_num:  # 持仓数量符合要求，只进行仓位增补，不进行换仓操作
                 # 今日调仓金额，正数为需要买入的金额，负数为需要卖出的金额
-                today_to_buy_amount = self.today_total_portfolio_amount - self.context.stock_account.market_value
+                today_to_buy_amount = self.today_total_portfolio_amount - sum(
+                    [position.market_value for position in self.__get_stock_positions()])
                 current_positions_df = pd.DataFrame(columns=['order_book_id', 'market_value'])
                 for position in current_positions:
                     line_item_dict = {
@@ -112,9 +113,15 @@ class RotationStrategy(ABC):
                     today_to_buy.iloc[:(self.holding_num-len(today_holding_list)), ]['target'])
             # 按照今天应有仓位总额，以及现有仓位总额，计算可用资金
             # TODO: 此处需要修改，不能用整体股票账户持仓金额变量，应该用当前target_list持仓金额
-            total_available_amount = self.today_total_portfolio_amount - \
-                self.context.stock_account.market_value
+            stock_total_value = 0
+            for target in self.target_list:
+                stock_total_value += get_position(target).market_value
+            total_available_amount = self.today_total_portfolio_amount - stock_total_value
             for target in today_to_buy_list:
                 logger.info(f'买入{target}...')
                 order_target_value(
                     target, total_available_amount/len(today_to_buy_list))
+        
+    
+    def __get_stock_positions(self)->list:
+        return [position for position in get_positions() if position.order_book_id in self.target_list]

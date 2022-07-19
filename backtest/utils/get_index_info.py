@@ -1,6 +1,7 @@
 from rqalpha.apis import *
 from rqalpha import run_func
 import pandas as pd
+from numpy import *
 
 
 # result = history_bars('000891.XSHG', 1000, '1d',['datetime','close'])
@@ -29,14 +30,20 @@ def handle_bar(context, bar_dict):
     #     if not picked_series.empty:
     #         result_dict[picked_series['order_book_id'].iloc[0]] = pd.to_datetime(picked_series['listed_date'].iloc[0]).strftime('%Y%m%d')
 
+
+    
+    price = pd.DataFrame(history_bars('000300.XSHG', 50, '1d',['datetime','close']))
+    result = std(diff(price['close']) / price['close'][:-1])
     print()
     
-    result = order_target_value('H11001.XSHG',5000000)
+    # result = order_target_value('H11001.XSHG',100000000)
+    # result = order_target_percent('000012.XSHG',0.3)
+    # result = order_target_percent('000891.XSHG',0.5)
     print()
 
 __config__ = {
     "base": {
-        "start_date": "20220601",
+        "start_date": "20150501",
         "end_date": "20220630",
         "frequency": "1d",
         "matching_type": "current_bar",

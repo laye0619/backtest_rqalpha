@@ -1,7 +1,11 @@
+from datetime import timedelta
 import pandas as pd
+import numpy as np
+import talib
 import glob
 
-def get_analysis_result(start_date, end_date, pkl_save_path)->pd.DataFrame:
+
+def get_analysis_result(start_date, end_date, pkl_save_path) -> pd.DataFrame:
     """分析给定的pkl文件夹下所有的pkl文件，并生成df
 
     Args:
@@ -30,3 +34,33 @@ def get_analysis_result(start_date, end_date, pkl_save_path)->pd.DataFrame:
             "total_returns": summary["total_returns"],
         })
     return pd.DataFrame(results)
+
+
+def caculate_vo_ts(data: pd.DataFrame, std_period: int = 30, sma_period=20) -> pd.DataFrame:
+    """计算标的波动率相关数据
+
+    Args:
+        df (pd.DataFrame):column=['close'], index='date'
+        std_period (int, optional): _description_. Defaults to 30.
+        sma_period (int, optional): _description_. Defaults to 20.
+
+    Returns:
+        pd.DataFrame: column=['close', 'std', 'sma_std', 'std_pct'], index='date'
+    """
+
+    # 计算小周期波动率（标准差）
+    std_list = []
+    for i in range(0, len(data)-std_period):
+        std_df = data.iloc[i:i+std_period, ]
+        std_df['Log returns'] = np.log(std_df['close']/std_df['close'].shift())
+        std = std_df['Log returns'].std()
+        data.loc[std_df.iloc[0].name, 'std'] = std
+    data['sma_std'] = talib.SMA(data['std'].sort_index(ascending=True), 20)
+    
+    # 计算小周期分位数
+    pct_list = []
+    for i in range(0, len(data)-250*5):
+        pct_df = data.iloc[i:i+252*5, ]
+        pct_df['pct'] = pct_df['std'].rank(pct=True)
+        data.loc[pct_df.iloc[0].name, 'std_pct'] = pct_df.iloc[0]['pct']
+    return data
