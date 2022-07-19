@@ -65,7 +65,7 @@ class BalanceStrategy(ABC):
             if self.context.stock_account.cash < value:
                 if abs(self.context.stock_account.cash/value-1) > 0.20:
                     raise Exception()
-                logger.warn(
+                logger.info(
                     f'No enough cash for buying RMB {value}, buy {self.context.stock_account.cash} instead')
                 value = self.context.stock_account.cash
             order_value(order_book_id, value)

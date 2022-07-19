@@ -68,6 +68,30 @@ def caculate_vo_ts(data: pd.DataFrame, std_period: int = 30, sma_period=20) -> p
         data.loc[pct_df.iloc[0].name, 'std_pct'] = pct_df.iloc[0]['pct']
     return data
 
+def caculate_va_1000002_lxr(date:str, method: str = 'median', pct_period: str = 'y5'):
+    """查询理性人‘沪深A股’指数的给定日期，给定方法的pe，pb值
+
+    Args:
+        date (str): 六位数字，例如20150104
+        method (str, optional): _description_. Defaults to 'median'.
+        pct_period (str, optional): _description_. Defaults to 'y5'.
+    """
+    lxr_record = db_get_dict_from_mongodb(
+        mongo_db_name=const.MONGODB_DB_LXR,
+        col_name=const.MONGODB_COL_LXR_INDEX,
+        query_dict={
+            'stockCode': '1000002',
+            'date': date
+        }
+    )
+    if len(lxr_record) != 1:
+        raise ValueError(f'1000002: 数据库中不存在数据或存在多条记录，有错误！')
+
+    pe_pct = lxr_record[0]['pe_ttm'][pct_period][method]['cvpos']
+    pb_pct = lxr_record[0]['pb'][pct_period][method]['cvpos']
+    return pe_pct, pb_pct
+    
+
 
 def caculate_va_lxr(target: str, date: str, method: str = 'median', pct_period: str = 'y5'):
     """通过mongodb查询lxr的指数估值分位数表
@@ -83,6 +107,8 @@ def caculate_va_lxr(target: str, date: str, method: str = 'median', pct_period: 
         target = '000932'
     elif target[:6] == '399913':
         target = '000913'
+    elif target[:6] == '399905':
+        target = '000905'
     lxr_record = db_get_dict_from_mongodb(
         mongo_db_name=const.MONGODB_DB_LXR,
         col_name=const.MONGODB_COL_LXR_INDEX,
@@ -92,7 +118,7 @@ def caculate_va_lxr(target: str, date: str, method: str = 'median', pct_period: 
         }
     )
     if len(lxr_record) != 1:
-        raise ValueError('数据库中不存在数据或存在多条记录，有错误！')
+        raise ValueError(f'{target}数据库中不存在数据或存在多条记录，有错误！')
 
     pe_pct = lxr_record[0]['pe_ttm'][pct_period][method]['cvpos']
     pb_pct = lxr_record[0]['pb'][pct_period][method]['cvpos']
