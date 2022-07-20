@@ -20,6 +20,8 @@ class BalanceStrategy(ABC):
     """
     stock_strategy: RotationStrategy  # 股票仓位部分的交易策略
     position_diff_threshold: float = 0.1  # 今天目标仓位和实际仓位差值限，若大于此线则出发调仓
+    stock_position_multiples: float = 1  # 股票仓位乘数
+    
     context: StrategyContext = field(
         default_factory=StrategyContext)  # 回测框架中的context对象
     bar_dict: dict = field(default_factory=dict)  # 交易时点的K线

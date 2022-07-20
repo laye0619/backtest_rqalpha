@@ -24,9 +24,14 @@ class BalanceStrategyVoQ(BalanceStrategy):
         for target, vo_df in self.__vo_df_dict.items():
             pct = vo_df.loc[today_str, 'std_pct']
             pct_list.append(0.5 if pd.isna(pct) else pct)
-        bond_position = mean(pct_list)    
+        bond_position = mean(pct_list) 
+        stock_position = 1-bond_position
         
-        return {'stock': (1-bond_position), 'bond': bond_position}
+        stock_position *= self.stock_position_multiples
+        # 处理股票仓位>1的情况
+        stock_position = stock_position if stock_position <= 1 else 1
+        
+        return {'stock': stock_position, 'bond': (1-stock_position)}
 
     def get_vo(self):
         # 计算波动率表

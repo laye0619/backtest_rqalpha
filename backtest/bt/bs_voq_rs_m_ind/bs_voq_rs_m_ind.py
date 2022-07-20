@@ -28,6 +28,7 @@ def init(context):
         stock_strategy=context.rs_m_ind,
         position_diff_threshold=context.position_diff_threshold,
         vo_period=context.vo_period,
+        stock_position_multiples=context.stock_position_multiples
     )
     context.bs_voq_rs_m_ind.get_vo()  # 初始化时生成波动率表
 

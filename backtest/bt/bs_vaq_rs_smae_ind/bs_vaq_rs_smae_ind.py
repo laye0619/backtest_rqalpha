@@ -29,6 +29,7 @@ def init(context):
         position_diff_threshold=context.position_diff_threshold,
         pct_period=context.pct_period,
         va_method=context.va_method,
+        stock_position_multiples=context.stock_position_multiples
     )
 
 

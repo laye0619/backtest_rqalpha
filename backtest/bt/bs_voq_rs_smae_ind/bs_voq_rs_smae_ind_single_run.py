@@ -16,6 +16,7 @@ check_date = pd.date_range(start_date, end_date, freq='d')
 
 position_diff_threshold = 0.1
 vo_period = 30
+stock_position_multiples = 1
 
 strategy_file_path = f'./backtest/bt/{strategy_name}/{strategy_name}.py'
 report_save_path = f'./backtest/bt_report/{strategy_name}/single_run'
@@ -39,7 +40,8 @@ config = {
             "trend_indicator_buffer": trend_indicator_buffer,
             "rank_indicator_buffer": (rank_indicator_buffer,),
             "position_diff_threshold": position_diff_threshold,
-            "vo_period": vo_period
+            "vo_period": vo_period,
+            "stock_position_multiples": stock_position_multiples
         },
         "log_level": "WARNING",  # DEBUG, INFO, WARNING, ERROR
     },

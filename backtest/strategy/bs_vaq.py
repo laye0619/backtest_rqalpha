@@ -38,7 +38,10 @@ class BalanceStrategyVaQ(BalanceStrategy):
             method=self.va_method
         ) 
         bond_position = (pe_pct+pb_pct)/2
+        stock_position = 1-bond_position
         
-        # logger.warn(f'股票仓位：{(1-bond_position)}')
+        stock_position *= self.stock_position_multiples
+        # 处理股票仓位>1的情况
+        stock_position = stock_position if stock_position <= 1 else 1
         
-        return {'stock': (1-bond_position), 'bond': bond_position}
+        return {'stock': stock_position, 'bond': (1-stock_position)}

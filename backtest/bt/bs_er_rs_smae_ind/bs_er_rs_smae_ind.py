@@ -1,8 +1,7 @@
-from backtest.strategy.bs_voq import BalanceStrategyVoQ
-from backtest.strategy.rs_m import RotationStrategyMomentum
+from backtest.strategy.bs_er import BalanceStrategyEquallyRisk
+from backtest.strategy.rs_smae import RotationStrategySmaEnergy
 from rqalpha.apis import *
 from backtest.utils import const
-
 
 
 def init(context):
@@ -13,31 +12,36 @@ def init(context):
     # 1.不变参数在此设定
     # 2.可变参数通过config.extra.context_vars来传入，下面RSMomentum对象从context中读取
 
-    context.target_list = list(const.TARGET_LIST['style_28'].keys())
-    context.holding_num = 1,
+    context.target_list = list(const.TARGET_LIST['ind_rotation'].keys())
 
-    context.rs_m_style_28 = RotationStrategyMomentum(
+    context.rs_smae_ind = RotationStrategySmaEnergy(
         target_list=context.target_list,
-        holding_num=context.holding_num[0],
-        momentum_period=context.momentum_period[0],
+        holding_num=context.holding_num,
+        sma_period=context.sma_period[0],
         trend_indicator_filter=context.trend_indicator_filter[0],
         trend_indicator_buffer=context.trend_indicator_buffer[0],
+        rank_indicator_buffer=context.rank_indicator_buffer
     )
-    
-    context.bs_voq_rs_m_style_28 = BalanceStrategyVoQ(
-        stock_strategy=context.rs_m_style_28,
+
+    context.bs_er_rs_smae_ind = BalanceStrategyEquallyRisk(
+        stock_strategy=context.rs_smae_ind,
         position_diff_threshold=context.position_diff_threshold,
+        va_pct_period=context.va_pct_period,
+        va_method=context.va_method,
         vo_period=context.vo_period,
         stock_position_multiples=context.stock_position_multiples
     )
-    context.bs_voq_rs_m_style_28.get_vo()  # 初始化时生成波动率表
+    context.bs_er_rs_smae_ind.get_vo()  # 初始化时生成波动率表
 
 
 def handle_bar(context, bar_dict):
     if pd.to_datetime(context.now.date()) not in context.check_date:
         return
     logger.info('Strategy executing...')
-    context.bs_voq_rs_m_style_28.bar_dict = bar_dict
-    context.bs_voq_rs_m_style_28.context = context
-    context.bs_voq_rs_m_style_28.transction(
-        context.bs_voq_rs_m_style_28.calculate_position())
+    context.bs_er_rs_smae_ind.bar_dict = bar_dict
+    context.bs_er_rs_smae_ind.context = context
+    context.bs_er_rs_smae_ind.transction(
+        context.bs_er_rs_smae_ind.calculate_position())
+
+    # 交易完成后，传入账户总金额
+    context.bs_er_rs_smae_ind.yesterday_total_value = context.stock_account.total_value
