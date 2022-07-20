@@ -1,10 +1,13 @@
+import os
+import json
 from dataclasses import dataclass, field
 from statistics import mean
+
 import pandas as pd
-from backtest.strategy.bs import BalanceStrategy
-from rqalpha.apis import *
-from backtest.utils import bt_analysis_helper
 import tushare as ts
+from backtest.strategy.bs import BalanceStrategy
+from backtest.utils import bt_analysis_helper
+from rqalpha.apis import *
 
 
 @dataclass
@@ -24,17 +27,16 @@ class BalanceStrategyVoQ(BalanceStrategy):
         for target, vo_df in self.__vo_df_dict.items():
             pct = vo_df.loc[today_str, 'std_pct']
             pct_list.append(0.5 if pd.isna(pct) else pct)
-        bond_position = mean(pct_list) 
+        bond_position = mean(pct_list)
         stock_position = 1-bond_position
-        
+
         stock_position *= self.stock_position_multiples
         # 处理股票仓位>1的情况
         stock_position = stock_position if stock_position <= 1 else 1
-        
+
         return {'stock': stock_position, 'bond': (1-stock_position)}
 
     def get_vo(self):
-        # 计算波动率表
         ts.set_token(
             '602e5ad960d66ab8b1f3c13b4fd746f5323ff808b0820768b02c6da3')
         pro = ts.pro_api()

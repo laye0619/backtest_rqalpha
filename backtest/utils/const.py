@@ -1,3 +1,6 @@
+import pandas as pd
+
+
 TARGET_LIST = {
     'style_28': {
         '000903.XSHG': '中证100',
@@ -24,7 +27,7 @@ MONGODB_DB_LXR = 'db_lixingren'
 MONGODB_COL_LXR_SW_IND = 'sw_ind'
 MONGODB_COL_LXR_INDEX = 'index'
 
-def get_config(start_date, end_date, report_save_path, context_vars):
+def get_config(report_save_path, context_vars, start_date='20140416', end_date='20220701'):
     config = {
         "base": {
             "start_date": start_date,
@@ -36,6 +39,9 @@ def get_config(start_date, end_date, report_save_path, context_vars):
             }
         },
         "extra": {
+            "context_vars": {
+                "check_date": pd.date_range(start_date, end_date, freq='d'),
+            },
             "log_level": "WARNING",  # DEBUG, INFO, WARNING, ERROR
         },
         "mod": {
@@ -105,5 +111,5 @@ def get_config(start_date, end_date, report_save_path, context_vars):
             }
         },
     }
-    config['extra']['context_vars'] = context_vars
+    config['extra']['context_vars'].update(context_vars)
     return config

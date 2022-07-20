@@ -1,3 +1,5 @@
+import json
+import os
 from dataclasses import dataclass, field
 
 import pandas as pd
@@ -73,7 +75,6 @@ class BalanceStrategyEquallyRisk(BalanceStrategy):
         return {'stock': today_stock_position, 'bond': (1-today_stock_position)}
 
     def get_vo(self):
-        # 计算波动率表
         ts.set_token(
             '602e5ad960d66ab8b1f3c13b4fd746f5323ff808b0820768b02c6da3')
         pro = ts.pro_api()
