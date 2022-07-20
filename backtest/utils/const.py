@@ -27,7 +27,8 @@ MONGODB_DB_LXR = 'db_lixingren'
 MONGODB_COL_LXR_SW_IND = 'sw_ind'
 MONGODB_COL_LXR_INDEX = 'index'
 
-def get_config(report_save_path, context_vars, start_date='20140416', end_date='20220701'):
+# def get_config(report_save_path, context_vars, start_date='20140416', end_date='20220701'):
+def get_config(report_save_path, context_vars, start_date='20151101', end_date='20220701'):
     config = {
         "base": {
             "start_date": start_date,
