@@ -19,7 +19,7 @@ position_diff_threshold = 0.1
 va_pct_period = 'y5'
 va_method = 'median'
 vo_period = 30
-stock_position_multiples = 1
+stock_position_multiples = 1.05
 
 strategy_file_path = f'./backtest/bt/{strategy_name}/{strategy_name}.py'
 report_save_path = f'./backtest/bt_report/{strategy_name}/single_run'

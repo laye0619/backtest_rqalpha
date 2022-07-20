@@ -1,5 +1,6 @@
 import pandas as pd
 from rqalpha import run_file
+from backtest.utils import const
 
 strategy_name = 'rs_m_ind'
 

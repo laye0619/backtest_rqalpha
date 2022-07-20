@@ -1,5 +1,6 @@
 from rqalpha import run_file
 import pandas as pd
+from backtest.utils import const
 
 strategy_name = 'bs_voq_rs_m_style_28'
 
