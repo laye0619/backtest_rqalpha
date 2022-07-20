@@ -131,8 +131,8 @@ def run_bt(config):
 
 
 if __name__ == '__main__':
-    # with concurrent.futures.ProcessPoolExecutor(max_workers=multiprocessing.cpu_count()) as executor:
-    with concurrent.futures.ProcessPoolExecutor(max_workers=1) as executor:
+    with concurrent.futures.ProcessPoolExecutor(max_workers=multiprocessing.cpu_count()) as executor:
+    # with concurrent.futures.ProcessPoolExecutor(max_workers=1) as executor:
         for task in tasks:
             executor.submit(run_bt, task)
     bt_analysis_helper.get_analysis_result(

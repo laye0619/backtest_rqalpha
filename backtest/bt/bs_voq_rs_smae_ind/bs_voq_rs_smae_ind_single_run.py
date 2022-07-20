@@ -7,7 +7,7 @@ strategy_name = 'bs_voq_rs_smae_ind'
 holding_num = 2
 sma_period = 20,
 trend_indicator_filter = 2.0,
-trend_indicator_buffer = 1.0,
+trend_indicator_buffer = 0.0,
 rank_indicator_buffer = 1
 
 position_diff_threshold = 0.1

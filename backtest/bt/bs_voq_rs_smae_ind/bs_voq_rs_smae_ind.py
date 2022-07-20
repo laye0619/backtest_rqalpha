@@ -8,6 +8,11 @@ from backtest.utils import const
 def init(context):
     # 未知原因，log_level不能传入，此处手工设置
     logger.level_name = context.config.extra.log_level
+    
+    # for 参数优化程序，未知原因，参数放入了tuple
+    if context.config.mod.sys_analyser.output_file:
+        if not isinstance(context.config.mod.sys_analyser.output_file, str):
+            context.config.mod.sys_analyser.output_file = context.config.mod.sys_analyser.output_file[0]
 
     # 因为后续要做参数优化，而rqalpha传入参数在init之前，如果此处设置参数将会以此处参数为准，config传入参数失败，故统一处理为：
     # 1.不变参数在此设定
