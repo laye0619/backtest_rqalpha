@@ -40,15 +40,6 @@ class BalanceStrategyEquallyRisk(BalanceStrategy):
             )
             today_stock_position = 1-(pe_pct+pb_pct)/2
 
-            # # 计算今日股票仓位 - 波动率分位
-            # pct_list = []
-            # for target, vo_df in self.__vo_df_dict.items():
-            #     pct = vo_df.loc[today_str, 'std_pct']
-            #     pct_list.append(0.5 if pd.isna(pct) else pct)
-            # bond_position = mean(pct_list)
-
-            # today_stock_position = 1-bond_position
-
             # 计算今日波动率值
             vo_std_list = []
             for target, vo_df in self.__vo_df_dict.items():
